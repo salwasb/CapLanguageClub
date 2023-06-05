@@ -28,5 +28,9 @@ public class Asistente implements Serializable {
     private String nombre;
     private String apellidos;
     private String correo;
-    
+
+    private Idioma idioma; 
+
+    private Nivel nivel;
+
 }
