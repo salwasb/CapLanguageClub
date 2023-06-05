@@ -1,10 +1,10 @@
 package com.example.entities;
 
 import java.io.Serializable;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,10 +33,10 @@ public class Asistente implements Serializable {
     private String nombre;
     private String apellidos;
     private String correo;
-    
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private String idioma;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private String nivel;
+    private Nivel niveles;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private Conversacion conversacion;
 }

@@ -1,7 +1,9 @@
 package com.example.entities;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -13,6 +15,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -26,7 +29,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @Table(name = "conversaciones")
-public class Conversacion{
+
+public class Conversacion implements Serializable{
+
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id; 
@@ -39,10 +45,12 @@ public class Conversacion{
 
     @Enumerated(EnumType.STRING)
     private Modo modo; 
+    
+    // private Idioma idioma; 
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private Idioma idioma; 
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "conversacion")
     private Nivel nivel; 
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "conversacion")
+    private List<Asistente> asistentes;
 }
