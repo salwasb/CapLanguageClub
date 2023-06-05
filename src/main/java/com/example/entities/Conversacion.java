@@ -34,11 +34,7 @@ public class Conversacion{
     private String titulo; 
     private String lugar;
     private int numeroMaxAsistentes; 
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fecha;
-
-    @DateTimeFormat(pattern = "hh:mm")
     private LocalTime hora; 
 
     @Enumerated(EnumType.STRING)
