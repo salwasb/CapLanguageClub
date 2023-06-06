@@ -1,5 +1,6 @@
 package com.example.entities;
 
-public class Idioma {
-    
+public enum Idioma {
+    FRANCES, INGLES
+
 }
