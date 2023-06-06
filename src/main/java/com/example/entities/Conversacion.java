@@ -3,8 +3,6 @@ package com.example.entities;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -34,11 +32,7 @@ public class Conversacion{
     private String titulo; 
     private String lugar;
     private int numeroMaxAsistentes; 
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fecha;
-
-    @DateTimeFormat(pattern = "hh:mm")
     private LocalTime hora; 
 
     @Enumerated(EnumType.STRING)
