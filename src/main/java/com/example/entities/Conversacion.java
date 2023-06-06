@@ -44,7 +44,8 @@ public class Conversacion implements Serializable{
     @Enumerated(EnumType.STRING)
     private Modo modo; 
     
-    // private Idioma idioma; 
+    @Enumerated(EnumType.STRING)
+     private Idioma idioma; 
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "conversacion")
     private Nivel nivel; 
