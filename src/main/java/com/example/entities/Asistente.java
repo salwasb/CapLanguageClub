@@ -1,7 +1,6 @@
 package com.example.entities;
 
 import java.io.Serializable;
-import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -35,13 +34,6 @@ public class Asistente implements Serializable {
     private String nombre;
     private String apellidos;
     private String correo;
-<<<<<<< HEAD
-
-    private Idioma idioma; 
-
-    private Nivel nivel;
-
-=======
     
     @Enumerated(EnumType.STRING)
      private Idioma idioma; 
@@ -51,5 +43,4 @@ public class Asistente implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Conversacion conversacion;
->>>>>>> origin/yakouta
 }
