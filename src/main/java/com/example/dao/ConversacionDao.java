@@ -1,5 +1,10 @@
 package com.example.dao;
 
-public interface ConversacionDao {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.entities.Conversacion;
+
+public interface ConversacionDao extends JpaRepository<Conversacion, Integer> {
+    
     
 }
