@@ -39,7 +39,6 @@ public class LoadDataBase {
                             .build());
             nivelService.save(Nivel.builder()
                     .id(1)
-                    .conversacion(conversacionService.findById(1))
                     .build());
             asistentesService.saveAsistente(
                     Asistente.builder()
@@ -48,7 +47,6 @@ public class LoadDataBase {
                             .apellidos("AAA")
                             .correo("jgjfj")
                             .idioma(Idioma.FRANCES)
-                            .niveles(nivelService.findById(1))
                             .conversacion(conversacionService.findById(1))
                             .build());
 

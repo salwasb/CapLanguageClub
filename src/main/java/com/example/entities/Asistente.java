@@ -55,6 +55,7 @@ public class Asistente implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull(message = "Le niveau ne peut pas être nul")
+    @JsonIgnoreProperties({"hebernateLazyInitializer", "handler"})
     private Nivel niveles;
 
     @ManyToOne(fetch = FetchType.LAZY)
