@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -34,15 +35,16 @@ public class Asistente implements Serializable {
     private int id;
     
     @NotNull(message = "Le prenom ne peut pas être nul")
-    @NotEmpty(message = "El nombre no puede estar vacío")
+    @NotEmpty(message = "Le prenom ne peut pas être vide")
     private String nombre;
 
     @NotNull(message = "Le nom ne peut pas être nul")
-    @NotEmpty(message = "El apellido no puede estar vacío")
+    @NotEmpty(message = "Le nom ne peut pas être vide")
     private String apellidos;
 
     @NotNull(message = "L'email ne peut pas être nul")
-    @NotEmpty(message = "El nombre del producto no puede estar vacío")
+    @NotEmpty(message = "L'email ne peut pas être vide")
+    @Email(regexp = "/^[A-Z0-9._%+-]+@cap.com")
     private String correo;
     
     @Enumerated(EnumType.STRING)
