@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.dao.AsistenteDao;
 import com.example.dao.ConversacionDao;
+import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class ConversacionServiceImpl implements ConversacionService{
 
     private final ConversacionDao conversacionDao;
+    private final AsistenteDao asistenteDao; 
     @Override
     public List<Conversacion> findAll() {
 
@@ -40,5 +43,12 @@ public class ConversacionServiceImpl implements ConversacionService{
         
         conversacionDao.save(conversacion);    
     }
+
+    @Override
+    public Asistente findByIdAsistente(int idAsistente) {
+        return asistenteDao.findById(idAsistente).get();
+    }
+
+
     
 }
