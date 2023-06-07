@@ -28,8 +28,8 @@ public class AsistentesServiceImpl implements AsistentesService {
 
     @Override
     @Transactional
-    public void saveAsistente(Asistente asistente) {
-       asistenteDao.save(asistente);
+    public Asistente saveAsistente(Asistente asistente) {
+       return asistenteDao.save(asistente);
     }
 
     @Override
