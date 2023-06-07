@@ -18,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -52,8 +53,14 @@ public class Conversacion implements Serializable{
     @Size(min = 4, message = "Le nombre de participants ne peut être moins que quatre et plus que huit")
     private int numeroAsistentes; 
 
-    
+    @FutureOrPresent
+    @NotNull(message = "La date ne peut pas être nul")
+    @NotBlank(message = "La date ne peut pas être vide")
     private LocalDate fecha;
+
+    @FutureOrPresent
+    @NotNull(message = "L'heure ne peut pas être nul")
+    @NotBlank(message = "L'heure ne peut pas être vide")
     private LocalTime hora; 
 
     @Enumerated(EnumType.STRING)
