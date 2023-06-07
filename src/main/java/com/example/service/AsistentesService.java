@@ -7,6 +7,6 @@ import com.example.entities.Asistente;
 public interface AsistentesService {
     public List<Asistente> findAll();
     public Asistente findById(int idAsistente);
-    public void saveAsistente (Asistente asistente);
+    public Asistente saveAsistente (Asistente asistente);
     public void deleteAsistente (Asistente asistente);
 }
