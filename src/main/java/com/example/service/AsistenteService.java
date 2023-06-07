@@ -6,7 +6,7 @@ import org.springframework.data.domain.Sort;
 
 import com.example.entities.Asistente;
 
-public interface AsistentesService {
+public interface AsistenteService {
     public List<Asistente> findAll(Sort sort);
     public Asistente findById(int idAsistente);
     public Asistente saveAsistente (Asistente asistente);

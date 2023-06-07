@@ -10,6 +10,6 @@ import com.example.entities.Asistente;
 
 public interface AsistenteDao extends JpaRepository<Asistente, Integer> {
   
-    @Query(value = "select p from Producto p left join fetch p.presentacion")
+    @Query(value = "select a from Asistente a left join fetch a.conversacion")
      public List<Asistente>findAll(Sort sort);
 }

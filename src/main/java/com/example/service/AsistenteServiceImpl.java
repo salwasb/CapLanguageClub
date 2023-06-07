@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AsistentesServiceImpl implements AsistentesService {
+public class AsistenteServiceImpl implements AsistenteService {
 
     private final AsistenteDao asistenteDao;
 
