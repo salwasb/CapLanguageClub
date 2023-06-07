@@ -3,8 +3,6 @@ package com.example;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -23,40 +21,26 @@ import com.example.service.NivelService;
 public class LoadDataBase {
 
     @Bean
-
     public CommandLineRunner sampleData(ConversacionService conversacionService, AsistenteService asistentesService,
             NivelService nivelService) {
 
-                // List<Asistente> asistentes1 = new ArrayList<>();
-                // List<Asistente> asistentes2 = new ArrayList<>();
-
-                // Asistente asis1 = Asistente.builder()
-                // .apellidos("DDD")
-                // .build();
-                
-
         return args -> {
-
-
             conversacionService.save(
                     Conversacion.builder()
                             .id(1)
                             .titulo("francais")
-                            .fecha(LocalDate.of(22, Month.DECEMBER, 2023))
+                            .fecha(LocalDate.of(2023, Month.DECEMBER, 20))
                             .hora(LocalTime.of(10, 15))
                             .modo(Modo.ONLINE)
                             .lugar("Planta 2")
                             .idioma(Idioma.FRANCES)
+                            .numeroAsistentes(5)
                             .nivel(nivelService.findById(1))
-                            .build()
-            );
-            conversacionService.save(
-                    Conversacion.builder()
-                            .id(2)
-                            .titulo("anglais")
-                            .build()
-            );
-
+                            .build());
+            nivelService.save(Nivel.builder()
+                    .id(1)
+                    .conversacion(conversacionService.findById(1))
+                    .build());
             asistentesService.saveAsistente(
                     Asistente.builder()
                             .id(1)
@@ -66,32 +50,30 @@ public class LoadDataBase {
                             .idioma(Idioma.FRANCES)
                             .niveles(nivelService.findById(1))
                             .conversacion(conversacionService.findById(1))
-                            .build()
+                            .build());
 
-            );
-            asistentesService.saveAsistente(
-                    Asistente.builder()
-                            .id(2)
-                            .nombre("Mimi")
-                            .apellidos("BBB")
-                            .correo("kffkkf")
-                            .idioma(Idioma.INGLES)
-                            .niveles(nivelService.findById(2))
-                            .conversacion(conversacionService.findById(2))
-                            .build()
-            );
-
-            asistentesService.saveAsistente(
-                    Asistente.builder()
-                            .id(3)
-                            .nombre("Richi")
-                            .apellidos("CCC")
-                            .correo("kdkdkdk")
-                            .idioma(Idioma.FRANCES)
-                            .niveles(nivelService.findById(3))
-                            .conversacion(conversacionService.findById(2))
-                            .build()
-            );
+            // asistentesService.saveAsistente(
+            // Asistente.builder()
+            // .id(2)
+            // .nombre("Mimi")
+            // .apellidos("BBB")
+            // .correo("kffkkf")
+            // .idioma(Idioma.INGLES)
+            // .niveles(nivelService.findById(2))
+            // .conversacion(conversacionService.findById(2))
+            // .build()
+            // );
+            // asistentesService.saveAsistente(
+            // Asistente.builder()
+            // .id(3)
+            // .nombre("Richi")
+            // .apellidos("CCC")
+            // .correo("kdkdkdk")
+            // .idioma(Idioma.FRANCES)
+            // .niveles(nivelService.findById(3))
+            // .conversacion(conversacionService.findById(2))
+            // .build()
+            // );
         };
 
     }

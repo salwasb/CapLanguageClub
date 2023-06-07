@@ -19,15 +19,18 @@ private final NivelDao nivelDao;
 
     @Override
     public List<Nivel> findAll() {
-     
         return nivelDao.findAll();
     
     }
 
     @Override
     public Nivel findById(int id) {
-        
         return nivelDao.findById(id).get();
+    }
+
+    @Override
+    public Nivel save(Nivel nivel) {
+       return nivelDao.save(nivel);
     }
     
 }
