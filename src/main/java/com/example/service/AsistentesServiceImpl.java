@@ -2,6 +2,7 @@ package com.example.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.dao.AsistenteDao;
@@ -17,8 +18,8 @@ public class AsistentesServiceImpl implements AsistentesService {
     private final AsistenteDao asistenteDao;
 
     @Override
-    public List<Asistente> findAll() {
-       return asistenteDao.findAll();
+    public List<Asistente> findAll(Sort sort) {
+       return asistenteDao.findAll(sort);
     }
 
     @Override
