@@ -2,6 +2,8 @@ package com.example.entities;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -49,10 +51,11 @@ public class Asistente implements Serializable {
     @NotNull(message = "La langue ne peut pas être nul")
      private Idioma idioma; 
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull(message = "Le niveau ne peut pas être nul")
     private Nivel niveles;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hebernateLazyInitializer", "handler"})
     private Conversacion conversacion;
 }

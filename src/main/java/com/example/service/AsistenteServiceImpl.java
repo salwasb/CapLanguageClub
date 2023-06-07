@@ -2,6 +2,7 @@ package com.example.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.dao.AsistenteDao;
@@ -12,13 +13,13 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AsistentesServiceImpl implements AsistentesService {
+public class AsistenteServiceImpl implements AsistenteService {
 
     private final AsistenteDao asistenteDao;
 
     @Override
-    public List<Asistente> findAll() {
-       return asistenteDao.findAll();
+    public List<Asistente> findAll(Sort sort) {
+       return asistenteDao.findAll(sort);
     }
 
     @Override
@@ -27,7 +28,10 @@ public class AsistentesServiceImpl implements AsistentesService {
     }
 
     @Override
+<<<<<<< HEAD:src/main/java/com/example/service/AsistentesServiceImpl.java
     @Transactional
+=======
+>>>>>>> origin/salwa:src/main/java/com/example/service/AsistenteServiceImpl.java
     public Asistente saveAsistente(Asistente asistente) {
        return asistenteDao.save(asistente);
     }
