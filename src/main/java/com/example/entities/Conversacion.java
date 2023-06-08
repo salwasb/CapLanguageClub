@@ -16,12 +16,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,43 +35,43 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name = "conversaciones")
 
-public class Conversacion implements Serializable{
+public class Conversacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id; 
+    private int id;
 
     @NotNull(message = "Le nom ne peut pas être null")
     @NotBlank(message = "Le nom ne peut pas être vide")
-    private String titulo; 
+    private String titulo;
 
     @NotNull(message = "Le lieu ne peut pas être null")
     @NotBlank(message = "Le lieu ne peut pas être vide")
     private String lugar;
 
-    // @Size(min = 4, message = "Le nombre de participants ne peut être moins que quatre et plus que huit")
-    private int numeroAsistentes; 
+    @NotNull(message = "Le lieu ne peut pas être null")
+    @Min(value = 2, message = "Le num du participant ne puet ètre moins que quatre")
+    @Max(value = 8, message = "Le num du participant ne puet ètre plus que huit")
+    private int numeroAsistentes;
 
-    // @FutureOrPresent
-    // @NotNull(message = "La date ne peut pas être nul")
-    // @NotBlank(message = "La date ne peut pas être vide")
+    @Future
+    @NotNull(message = "La date ne peut pas être nul")
     private LocalDate fecha;
 
-    // @FutureOrPresent
-    // @NotNull(message = "L'heure ne peut pas être nul")
-    // @NotBlank(message = "L'heure ne peut pas être vide")
-    private LocalTime hora; 
+    @Future
+    @NotNull(message = "L'heure ne peut pas être nul")
+    private LocalTime hora;
 
     @Enumerated(EnumType.STRING)
-    private Modo modo; 
-    
-    @Enumerated(EnumType.STRING)
-     private Idioma idioma; 
+    private Modo modo;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "conversacion")
-    private Nivel nivel; 
+    @Enumerated(EnumType.STRING)
+    private Idioma idioma;
+
+    @Enumerated(EnumType.STRING)
+    private Nivel nivel;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "conversacion")
     @JsonIgnore
