@@ -15,17 +15,14 @@ public class NivelServiceImpl implements NivelService {
 
 private final NivelDao nivelDao;
 
-
-
     @Override
     public List<Nivel> findAll() {
         return nivelDao.findAll();
-    
     }
 
     @Override
-    public Nivel findById(int id) {
-        return nivelDao.findById(id).get();
+    public Nivel findById(int idNivel) {
+        return nivelDao.findById(idNivel).get();
     }
 
     @Override

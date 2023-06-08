@@ -7,7 +7,7 @@ import com.example.entities.Nivel;
 public interface NivelService {
     
     public List<Nivel> findAll();
-    public Nivel findById(int id);
+    public Nivel findById(int idNivel);
     public Nivel save(Nivel nivel);
 
 }

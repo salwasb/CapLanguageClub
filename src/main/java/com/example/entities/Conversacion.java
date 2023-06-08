@@ -50,17 +50,17 @@ public class Conversacion implements Serializable{
     @NotBlank(message = "Le lieu ne peut pas être vide")
     private String lugar;
 
-    @Size(min = 4, message = "Le nombre de participants ne peut être moins que quatre et plus que huit")
+    // @Size(min = 4, message = "Le nombre de participants ne peut être moins que quatre et plus que huit")
     private int numeroAsistentes; 
 
-    @FutureOrPresent
-    @NotNull(message = "La date ne peut pas être nul")
-    @NotBlank(message = "La date ne peut pas être vide")
+    // @FutureOrPresent
+    // @NotNull(message = "La date ne peut pas être nul")
+    // @NotBlank(message = "La date ne peut pas être vide")
     private LocalDate fecha;
 
-    @FutureOrPresent
-    @NotNull(message = "L'heure ne peut pas être nul")
-    @NotBlank(message = "L'heure ne peut pas être vide")
+    // @FutureOrPresent
+    // @NotNull(message = "L'heure ne peut pas être nul")
+    // @NotBlank(message = "L'heure ne peut pas être vide")
     private LocalTime hora; 
 
     @Enumerated(EnumType.STRING)

@@ -21,31 +21,34 @@ import com.example.service.NivelService;
 public class LoadDataBase {
 
     @Bean
-    public CommandLineRunner sampleData(ConversacionService conversacionService, AsistenteService asistentesService,
-            NivelService nivelService) {
+    public CommandLineRunner sampleData(ConversacionService conversacionService, 
+                                            AsistenteService asistentesService,
+                                                       NivelService nivelService) {
 
         return args -> {
+            nivelService.save(Nivel.builder()
+                    .id(1)
+                    .nombre("Nivel A")
+                    .build());
             conversacionService.save(
                     Conversacion.builder()
                             .id(1)
                             .titulo("francais")
                             .fecha(LocalDate.of(2023, Month.DECEMBER, 20))
-                            .hora(LocalTime.of(10, 15))
+                            .hora(LocalTime.of(10,15,00))
                             .modo(Modo.ONLINE)
                             .lugar("Planta 2")
                             .idioma(Idioma.FRANCES)
                             .numeroAsistentes(5)
-                            .nivel(nivelService.findById(1))
+                            // .nivel(nivelService.findById(1))
                             .build());
-            nivelService.save(Nivel.builder()
-                    .id(1)
-                    .build());
+
             asistentesService.saveAsistente(
                     Asistente.builder()
                             .id(1)
                             .nombre("Nawal")
                             .apellidos("AAA")
-                            .correo("jgjfj")
+                            .correo("jgjfj@cap.com")
                             .idioma(Idioma.FRANCES)
                             .conversacion(conversacionService.findById(1))
                             .build());
