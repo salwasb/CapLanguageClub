@@ -3,8 +3,6 @@ package com.example;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +12,6 @@ import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
 import com.example.entities.Idioma;
 import com.example.entities.Modo;
-import com.example.entities.Nivel;
 import com.example.service.AsistenteService;
 import com.example.service.ConversacionService;
 import com.example.service.NivelService;
@@ -37,12 +34,11 @@ public class LoadDataBase {
 
         return args -> {
 
-
             conversacionService.save(
                     Conversacion.builder()
                             .id(1)
                             .titulo("francais")
-                            .fecha(LocalDate.of(22, Month.DECEMBER, 2023))
+                            .fecha(LocalDate.of(2023, 12, 23))
                             .hora(LocalTime.of(10, 15))
                             .modo(Modo.ONLINE)
                             .lugar("Planta 2")
@@ -54,6 +50,12 @@ public class LoadDataBase {
                     Conversacion.builder()
                             .id(2)
                             .titulo("anglais")
+                            .fecha(LocalDate.of(2023, 12, 20))
+                            .hora(LocalTime.of(10, 15))
+                            .modo(Modo.PRESENCIAL)
+                            .lugar("Planta 2")
+                            .idioma(Idioma.INGLES)
+                            .nivel(nivelService.findById(2))
                             .build()
             );
 

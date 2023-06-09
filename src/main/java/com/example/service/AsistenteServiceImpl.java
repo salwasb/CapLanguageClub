@@ -28,10 +28,6 @@ public class AsistenteServiceImpl implements AsistenteService {
     }
 
     @Override
-<<<<<<< HEAD:src/main/java/com/example/service/AsistentesServiceImpl.java
-    @Transactional
-=======
->>>>>>> origin/salwa:src/main/java/com/example/service/AsistenteServiceImpl.java
     public Asistente saveAsistente(Asistente asistente) {
        return asistenteDao.save(asistente);
     }
