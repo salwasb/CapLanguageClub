@@ -150,7 +150,7 @@ public class AsistenteController {
             return responseEntity;
         }
 
-        // si no hay errores persistimos el producto y devolvemos informacion
+        // si no hay errores persistimos el asistente y devolvemos informacion
 
         try {
             Asistente asistentePersistido = asistenteService.saveAsistente(asistente);

@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,7 +45,7 @@ public class Asistente implements Serializable {
     private String apellidos;
 
     @NotNull(message = "L'email ne peut pas être nul")
-    //@Email(regexp = "/^[A-Z0-9._%+-]+@cap.com")
+    @Pattern(regexp = "(?i)^[A-Z0-9._%+-]+@cap\\.com$", message = "L'e-mail doit avoir le domaine @cap.com")
     private String correo;
     
     @Enumerated(EnumType.STRING)

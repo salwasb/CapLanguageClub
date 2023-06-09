@@ -71,7 +71,7 @@ public class LoadDataBase {
                             .id(2)
                             .nombre("Mimi")
                             .apellidos("BBB")
-                            .correo("kffkkf")
+                            .correo("kffkk@cap.com")
                             .idioma(Idioma.INGLES)
                             .conversacion(conversacionService.findById(2))
                             .build());
@@ -80,7 +80,7 @@ public class LoadDataBase {
                             .id(3)
                             .nombre("Richi")
                             .apellidos("CCC")
-                            .correo("kdkdkdk")
+                            .correo("kdkdkdk@cap.com")
                             .idioma(Idioma.FRANCES)
                             .conversacion(conversacionService.findById(2))
                             .build());
