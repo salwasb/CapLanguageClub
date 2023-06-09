@@ -12,6 +12,7 @@ import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
 import com.example.entities.Idioma;
 import com.example.entities.Modo;
+import com.example.entities.Nivel;
 import com.example.service.AsistenteService;
 import com.example.service.ConversacionService;
 
