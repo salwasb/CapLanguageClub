@@ -80,6 +80,9 @@ public ResponseEntity<List<Asistente>> findAll(@RequestParam(name = "page",
 
 
 
+//Método por el cual el administrador puede obtener un asistente por su id
+
+
 
     
 
@@ -105,6 +108,9 @@ public ResponseEntity<List<Asistente>> findAll(@RequestParam(name = "page",
         return responseEntity;
 
     }
+
+
+
 
     // Metodo por el cual el administrador puede modificar un asistente, recibiendo su id
     // (creo que debe de ser casi igual que el de crear/dar de alta un asistente nuevo)
