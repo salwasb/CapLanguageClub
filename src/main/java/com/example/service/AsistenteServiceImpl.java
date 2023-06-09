@@ -27,6 +27,12 @@ public class AsistenteServiceImpl implements AsistenteService {
     @Override
     public Page<Asistente> findAll(Pageable pageable) {
       return asistenteDao.findAll(pageable);
+    
+    }
+
+    @Override
+    public List<Asistente> findAll() {
+      return asistenteDao.findAll();
     }
 
     @Override
@@ -50,6 +56,8 @@ public class AsistenteServiceImpl implements AsistenteService {
       return asistenteDao.save(asistente);
       
     }
+
+    
 
 
 

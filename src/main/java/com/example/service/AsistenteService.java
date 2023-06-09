@@ -11,6 +11,7 @@ import com.example.entities.Asistente;
 public interface AsistenteService {
     public List<Asistente> findAll(Sort sort);
     public Page<Asistente> findAll(Pageable pageable);
+    public List<Asistente> findAll();
     public Asistente findById(int idAsistente);
     public Asistente saveAsistente (Asistente asistente);
     public void deleteAsistente (Asistente asistente);
