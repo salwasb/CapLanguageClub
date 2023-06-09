@@ -37,5 +37,11 @@ public class AsistenteServiceImpl implements AsistenteService {
     public void deleteAsistente(Asistente asistente) {
       asistenteDao.delete(asistente);
     }
+
+    @Override
+    public Asistente updateAsistente(Asistente asistente) {
+      return asistenteDao.save(asistente);
+      
+    }
     
 }

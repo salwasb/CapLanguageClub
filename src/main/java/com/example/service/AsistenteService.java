@@ -11,4 +11,5 @@ public interface AsistenteService {
     public Asistente findById(int idAsistente);
     public Asistente saveAsistente (Asistente asistente);
     public void deleteAsistente (Asistente asistente);
+    public Asistente updateAsistente (Asistente asistente);
 }
