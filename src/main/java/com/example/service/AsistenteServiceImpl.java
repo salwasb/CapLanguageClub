@@ -27,7 +27,6 @@ public class AsistenteServiceImpl implements AsistenteService {
     @Override
     public Page<Asistente> findAll(Pageable pageable) {
       return asistenteDao.findAll(pageable);
-    
     }
 
     @Override
@@ -41,6 +40,7 @@ public class AsistenteServiceImpl implements AsistenteService {
     }
 
     @Override
+    @Transactional
     public Asistente saveAsistente(Asistente asistente) {
        return asistenteDao.save(asistente);
     }
@@ -52,9 +52,16 @@ public class AsistenteServiceImpl implements AsistenteService {
     }
 
     @Override
+    @Transactional
     public Asistente updateAsistente(Asistente asistente) {
       return asistenteDao.save(asistente);
       
+    }
+
+    @Override
+    @Transactional
+    public void deleteAsistenteById(int idAsistente) {
+      asistenteDao.deleteById(idAsistente);
     }
 
     

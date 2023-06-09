@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class ConversacionServiceImpl implements ConversacionService{
 
     private final ConversacionDao conversacionDao;
-    private final AsistenteDao asistenteDao; 
+   
     @Override
     public List<Conversacion> findAll() {
 
@@ -26,7 +26,6 @@ public class ConversacionServiceImpl implements ConversacionService{
 
     @Override
     public Conversacion findById(int idConversacion) {
-        
         return conversacionDao.findById(idConversacion).orElse(null);
     }
 
@@ -39,14 +38,8 @@ public class ConversacionServiceImpl implements ConversacionService{
 
     @Override
     @Transactional
-    public void save(Conversacion conversacion) {
-        
-        conversacionDao.save(conversacion);    
-    }
-
-    @Override
-    public Asistente findByIdAsistente(int idAsistente) {
-        return asistenteDao.findById(idAsistente).orElse(null);
+    public Conversacion save(Conversacion conversacion) {
+       return conversacionDao.save(conversacion);
     }
 
 

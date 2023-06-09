@@ -37,18 +37,15 @@ public class AsistenteController {
     @Autowired
     private AsistenteService asistenteService;
 
-    // Metodo por el cual se obtienen TODOS los asistentes, con paginación
-    // respondiendo a una peticion (request) del tipo siguiente:
-    // //http://localhost:8080/productos?page=0&size=3
+   // Metodo por el cual se obtienen TODOS los asistentes, con paginación
 
     // @GetMapping
-    // public ResponseEntity<List<Asistente>> findAll(@RequestParam(name = "page",
-    // required = false) Integer page,
-    // @RequestParam(name = "size", required = false) Integer size) {
+    // public ResponseEntity<List<Asistente>> findAll(
+    //     @RequestParam(name = "page", required = false) Integer page,
+    //     @RequestParam(name = "size", required = false) Integer size) {
 
     // List<Asistente> asistentes = new ArrayList<>();
-    // Sort sortByLastName = Sort.by("apellidos"); //¿lo ordenamos por nombre o por
-    // apellidos?
+    // Sort sortByLastName = Sort.by("apellidos"); 
     // ResponseEntity<List<Asistente>> responseEntity = null;
 
     // // Primero comprobar si se requiere paginacion, o no
@@ -145,9 +142,8 @@ public class AsistenteController {
 
                 mensajesError.add(objectError.getDefaultMessage());
             }
-
-            responseAsMap.put("Errores: ", mensajesError);
-            responseAsMap.put("Asistente: ", asistente);
+            responseAsMap.put("Erreur: ", mensajesError);
+            responseAsMap.put("Asistant: ", asistente);
 
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
@@ -159,13 +155,13 @@ public class AsistenteController {
         try {
             Asistente asistentePersistido = asistenteService.saveAsistente(asistente);
             String successMessage = "L'assistant a été créé avec succès";
-            responseAsMap.put("Mensaje: ", successMessage);
-            responseAsMap.put("Asistente:", asistentePersistido);
+            responseAsMap.put("Mensage: ", successMessage);
+            responseAsMap.put("Asistant:", asistentePersistido);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
         } catch (DataAccessException e) {
             String errorMessage = "L'assistant n'a pas pu être conservé et la cause la plus probable de l'erreur est: "
                     + e.getMostSpecificCause();
-            responseAsMap.put("Error", errorMessage);
+            responseAsMap.put("Erreur", errorMessage);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return responseEntity;
@@ -197,36 +193,32 @@ public class AsistenteController {
                 mensajesError.add(objectError.getDefaultMessage());
             }
 
-            responseAsMap.put("Asistente: ", asistente);
-            responseAsMap.put("Errores: ", mensajesError);
+            responseAsMap.put("Asistant: ", asistente);
+            responseAsMap.put("Erreur: ", mensajesError);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
             return responseEntity;
-
         }
-
         // Si no hay errores persistimos/guardamos el asistente y devolvemos informacion
         try {
             asistente.setId(idAsistente);
             Asistente asistenteActualizado = asistenteService.saveAsistente(asistente);
 
             String successMessage = "L'assistant a été créé avec succès";
-            responseAsMap.put("Mensaje: ", successMessage);
-            responseAsMap.put("Asistente", asistenteActualizado);
+            responseAsMap.put("Mensage: ", successMessage);
+            responseAsMap.put("Asistant", asistenteActualizado);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
         } catch (DataAccessException e) {
             String errorMessage = "L'assistant n'a pas pu être mis à jour et" +
                     "la cause la plus probable de l'erreur est : " + e.getMostSpecificCause();
-            responseAsMap.put("error: ", errorMessage);
+            responseAsMap.put("Erreur: ", errorMessage);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         return responseEntity;
     }
 
-    // Metodo por el cual el administrador puede eliminar un asistente, recibiendo
-    // su id
+    // Metodo por el cual el administrador puede eliminar un asistente, recibiendo su id
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deleteAsistente(@PathVariable(name = "id") Integer idAsistente) {
 
@@ -235,10 +227,10 @@ public class AsistenteController {
 
         try {
             asistenteService.deleteAsistente(asistenteService.findById(idAsistente));
-            responseAsMap.put("mensaje", "L'assistant a été supprimé avec succès");
+            responseAsMap.put("Mensage", "L'assistant a été supprimé avec succès");
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
         } catch (DataAccessException e) {
-            responseAsMap.put("Error Grave",
+            responseAsMap.put("Erreur Grave",
                     "Échec de la suppression de l'assistant, en raison de : " + e.getMostSpecificCause());
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
                     HttpStatus.INTERNAL_SERVER_ERROR);
