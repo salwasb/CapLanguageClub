@@ -14,23 +14,13 @@ import com.example.entities.Idioma;
 import com.example.entities.Modo;
 import com.example.service.AsistenteService;
 import com.example.service.ConversacionService;
-import com.example.service.NivelService;
 
 @Configuration
 public class LoadDataBase {
 
     @Bean
-
-    public CommandLineRunner sampleData(ConversacionService conversacionService, AsistenteService asistentesService,
-            NivelService nivelService) {
-
-                // List<Asistente> asistentes1 = new ArrayList<>();
-                // List<Asistente> asistentes2 = new ArrayList<>();
-
-                // Asistente asis1 = Asistente.builder()
-                // .apellidos("DDD")
-                // .build();
-                
+    public CommandLineRunner sampleData(ConversacionService conversacionService,
+            AsistenteService asistentesService) {
 
         return args -> {
 
@@ -38,39 +28,36 @@ public class LoadDataBase {
                     Conversacion.builder()
                             .id(1)
                             .titulo("francais")
-                            .fecha(LocalDate.of(2023, 12, 23))
-                            .hora(LocalTime.of(10, 15))
+                            .fecha(LocalDate.of(2023, Month.DECEMBER, 20))
+                            .hora(LocalTime.of(10, 15, 00))
                             .modo(Modo.ONLINE)
                             .lugar("Planta 2")
                             .idioma(Idioma.FRANCES)
-                            .nivel(nivelService.findById(1))
-                            .build()
-            );
-            conversacionService.save(
+                            .nivel(Nivel.A)
+                            .numeroAsistentes(5)
+                            .build());
+                            conversacionService.save(
                     Conversacion.builder()
                             .id(2)
                             .titulo("anglais")
-                            .fecha(LocalDate.of(2023, 12, 20))
-                            .hora(LocalTime.of(10, 15))
+                            .fecha(LocalDate.of(2023, Month.DECEMBER, 20))
+                            .hora(LocalTime.of(10, 15, 00))
                             .modo(Modo.PRESENCIAL)
                             .lugar("Planta 2")
                             .idioma(Idioma.INGLES)
-                            .nivel(nivelService.findById(2))
-                            .build()
-            );
-
+                            .nivel(Nivel.SINNIVEL)
+                            .numeroAsistentes(5)
+                            .build());
             asistentesService.saveAsistente(
                     Asistente.builder()
                             .id(1)
                             .nombre("Nawal")
                             .apellidos("AAA")
-                            .correo("jgjfj")
+                            .correo("jgjfj@cap.com")
                             .idioma(Idioma.FRANCES)
-                            .niveles(nivelService.findById(1))
                             .conversacion(conversacionService.findById(1))
-                            .build()
+                            .build());
 
-            );
             asistentesService.saveAsistente(
                     Asistente.builder()
                             .id(2)
@@ -78,11 +65,8 @@ public class LoadDataBase {
                             .apellidos("BBB")
                             .correo("kffkkf")
                             .idioma(Idioma.INGLES)
-                            .niveles(nivelService.findById(2))
                             .conversacion(conversacionService.findById(2))
-                            .build()
-            );
-
+                            .build());
             asistentesService.saveAsistente(
                     Asistente.builder()
                             .id(3)
@@ -90,10 +74,8 @@ public class LoadDataBase {
                             .apellidos("CCC")
                             .correo("kdkdkdk")
                             .idioma(Idioma.FRANCES)
-                            .niveles(nivelService.findById(3))
                             .conversacion(conversacionService.findById(2))
-                            .build()
-            );
+                            .build());
         };
 
     }
