@@ -44,7 +44,7 @@ public class Asistente implements Serializable {
     private String apellidos;
 
     @NotNull(message = "L'email ne peut pas être nul")
-    // @Email(regexp = "/^[A-Z0-9._%+-]+@cap.com")
+    //@Email(regexp = "/^[A-Z0-9._%+-]+@cap.com")
     private String correo;
     
     @Enumerated(EnumType.STRING)

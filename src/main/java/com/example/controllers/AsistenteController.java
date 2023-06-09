@@ -39,56 +39,56 @@ public class AsistenteController {
 
    // Metodo por el cual se obtienen TODOS los asistentes, con paginación
 
-    // @GetMapping
-    // public ResponseEntity<List<Asistente>> findAll(
-    //     @RequestParam(name = "page", required = false) Integer page,
-    //     @RequestParam(name = "size", required = false) Integer size) {
+    @GetMapping
+    public ResponseEntity<List<Asistente>> findAllByPage(
+        @RequestParam(name = "page", required = false) Integer page,
+        @RequestParam(name = "size", required = false) Integer size) {
 
-    // List<Asistente> asistentes = new ArrayList<>();
-    // Sort sortByLastName = Sort.by("apellidos"); 
-    // ResponseEntity<List<Asistente>> responseEntity = null;
+    List<Asistente> asistentes = new ArrayList<>();
+    Sort sortByLastName = Sort.by("apellidos"); 
+    ResponseEntity<List<Asistente>> responseEntity = null;
 
-    // // Primero comprobar si se requiere paginacion, o no
-    // if (page != null && size != null) {
+    // Primero comprobar si se requiere paginacion, o no
+    if (page != null && size != null) {
 
-    // Pageable pageable = PageRequest.of(page, size, sortByLastName);
+    Pageable pageable = PageRequest.of(page, size, sortByLastName);
 
-    // // Se solicita el listado de asistentes pagignados.
-    // try {
-    // Page<Asistente> asistentesPaginados = asistenteService.findAll(pageable);
-    // asistentes = asistentesPaginados.getContent();
-    // responseEntity = new ResponseEntity<List<Asistente>>(asistentes,
-    // HttpStatus.OK);
-    // } catch (Exception e) {
-    // responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    // }
-    // } else {
-    // // Devolver los asistentes ordenados
-    // try {
-    // asistentes = asistenteService.findAll(sortByLastName);
-    // responseEntity = new
-    // ResponseEntity<List<Asistente>>(asistentes,HttpStatus.OK);
-    // } catch (Exception e) {
-    // responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    // }
-    // }
-    // return responseEntity;
-    // }
+    // Se solicita el listado de asistentes pagignados.
+    try {
+    Page<Asistente> asistentesPaginados = asistenteService.findAll(pageable);
+    asistentes = asistentesPaginados.getContent();
+    responseEntity = new ResponseEntity<List<Asistente>>(asistentes,
+    HttpStatus.OK);
+    } catch (Exception e) {
+    responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+    } else {
+    // Devolver los asistentes ordenados
+    try {
+    asistentes = asistenteService.findAll(sortByLastName);
+    responseEntity = new
+    ResponseEntity<List<Asistente>>(asistentes,HttpStatus.OK);
+    } catch (Exception e) {
+    responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    }
+    return responseEntity;
+    }
 
     // Metodo por el cual se obtienen TODOS los asistentes, SIN paginación
-    @GetMapping
-    public ResponseEntity<List<Asistente>> findAll() {
+    // @GetMapping
+    // public ResponseEntity<List<Asistente>> findAll() {
 
-        List<Asistente> asistentes = new ArrayList<>();
+    //     List<Asistente> asistentes = new ArrayList<>();
 
-        ResponseEntity<List<Asistente>> responseEntity = null;
+    //     ResponseEntity<List<Asistente>> responseEntity = null;
 
-        asistentes = asistenteService.findAll();
+    //     asistentes = asistenteService.findAll();
 
-        responseEntity = new ResponseEntity<List<Asistente>>(asistentes, HttpStatus.OK);
+    //     responseEntity = new ResponseEntity<List<Asistente>>(asistentes, HttpStatus.OK);
 
-        return responseEntity;
-    }
+    //     return responseEntity;
+    // }
 
     // //Método por el cual el administrador puede obtener un asistente por su id
     @GetMapping("/{id}")
