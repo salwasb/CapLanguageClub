@@ -2,6 +2,8 @@ package com.example.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,17 @@ public class AsistenteServiceImpl implements AsistenteService {
     }
 
     @Override
+    public Page<Asistente> findAll(Pageable pageable) {
+      return asistenteDao.findAll(pageable);
+    
+    }
+
+    @Override
+    public List<Asistente> findAll() {
+      return asistenteDao.findAll();
+    }
+
+    @Override
     public Asistente findById(int idAsistente) {
       return asistenteDao.findById(idAsistente).orElse(null);
     }
@@ -37,5 +50,17 @@ public class AsistenteServiceImpl implements AsistenteService {
     public void deleteAsistente(Asistente asistente) {
       asistenteDao.delete(asistente);
     }
+
+    @Override
+    public Asistente updateAsistente(Asistente asistente) {
+      return asistenteDao.save(asistente);
+      
+    }
+
+    
+
+
+
+  
     
 }
