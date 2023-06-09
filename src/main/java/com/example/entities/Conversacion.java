@@ -18,7 +18,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -51,9 +50,9 @@ public class Conversacion implements Serializable {
     @NotBlank(message = "Le lieu ne peut pas être vide")
     private String lugar;
 
-    @NotNull(message = "Le lieu ne peut pas être null")
-    @Min(value = 2, message = "Le num du participant ne puet ètre moins que quatre")
-    @Max(value = 8, message = "Le num du participant ne puet ètre plus que huit")
+    @NotNull(message = "Le nombre d'assistants ne peut pas être null")
+    @Min(value = 2, message = "Le nombre d'assistants ne peut pas etre inferieur a deux")
+    @Max(value = 8, message = "Le nombre d'assistants ne peut pas etre superieur a huit")
     private int numeroAsistentes;
 
     @Future

@@ -24,7 +24,7 @@ public class AsistenteServiceImpl implements AsistenteService {
 
     @Override
     public Asistente findById(int idAsistente) {
-      return asistenteDao.findById(idAsistente).get();
+      return asistenteDao.findById(idAsistente).orElse(null);
     }
 
     @Override

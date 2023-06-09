@@ -27,7 +27,7 @@ public class ConversacionServiceImpl implements ConversacionService{
     @Override
     public Conversacion findById(int idConversacion) {
         
-        return conversacionDao.findById(idConversacion).get();
+        return conversacionDao.findById(idConversacion).orElse(null);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ConversacionServiceImpl implements ConversacionService{
 
     @Override
     public Asistente findByIdAsistente(int idAsistente) {
-        return asistenteDao.findById(idAsistente).get();
+        return asistenteDao.findById(idAsistente).orElse(null);
     }
 
 
