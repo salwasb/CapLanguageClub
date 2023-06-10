@@ -7,12 +7,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -182,7 +185,7 @@ public class AsistenteController {
                     .size(file.getSize())
                     .build();
 
-            responseAsMap.put("info de la imagen: ", fileUploadResponse);
+            responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
 
         }
 
@@ -190,7 +193,7 @@ public class AsistenteController {
             Asistente asistentePersistido = asistenteService.saveAsistente(asistente);
             String successMessage = "L'assistant a été créé avec succès";
             responseAsMap.put("Mensage: ", successMessage);
-            responseAsMap.put("asistente:", asistentePersistido);
+            responseAsMap.put("Asistant:", asistentePersistido);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
         } catch (DataAccessException e) {
             String errorMessage = "L'assistant n'a pas pu être conservé et la cause la plus probable de l'erreur est: "
@@ -273,6 +276,29 @@ public class AsistenteController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return responseEntity;
+    }
+      @GetMapping("/downloadFile/{fileCode}")
+    public ResponseEntity<?> downloadFile(@PathVariable(name = "fileCode") String fileCode) {
+
+        Resource resource = null;
+
+        try {
+            resource = fileDownloadUtil.getFileAsResource(fileCode);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+
+        if (resource == null) {
+            return new ResponseEntity<>("File not found ", HttpStatus.NOT_FOUND);
+        }
+
+        String contentType = "application/octet-stream";
+        String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
+
+        return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(contentType))
+        .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
+        .body(resource);
     }
 
 }
