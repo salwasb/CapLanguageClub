@@ -50,57 +50,57 @@ public class AsistenteController {
 
     private final FileDownloadUtil fileDownloadUtil;
 
-   // Metodo por el cual se obtienen TODOS los asistentes, con paginación
+    // Metodo por el cual se obtienen TODOS los asistentes, con paginación
 
     @GetMapping
     public ResponseEntity<List<Asistente>> findAllByPage(
-        @RequestParam(name = "page", required = false) Integer page,
-        @RequestParam(name = "size", required = false) Integer size) {
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "size", required = false) Integer size) {
 
-    List<Asistente> asistentes = new ArrayList<>();
-    Sort sortByLastName = Sort.by("apellidos"); 
-    ResponseEntity<List<Asistente>> responseEntity = null;
+        List<Asistente> asistentes = new ArrayList<>();
+        Sort sortByLastName = Sort.by("apellidos");
+        ResponseEntity<List<Asistente>> responseEntity = null;
 
-    // Primero comprobar si se requiere paginacion, o no
-    if (page != null && size != null) {
+        // Primero comprobar si se requiere paginacion, o no
+        if (page != null && size != null) {
 
-    Pageable pageable = PageRequest.of(page, size, sortByLastName);
+            Pageable pageable = PageRequest.of(page, size, sortByLastName);
 
-    // Se solicita el listado de asistentes pagignados.
-    try {
-    Page<Asistente> asistentesPaginados = asistenteService.findAll(pageable);
-    asistentes = asistentesPaginados.getContent();
-    responseEntity = new ResponseEntity<List<Asistente>>(asistentes,
-    HttpStatus.OK);
-    } catch (Exception e) {
-    responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-    } else {
-    // Devolver los asistentes ordenados
-    try {
-    asistentes = asistenteService.findAll(sortByLastName);
-    responseEntity = new
-    ResponseEntity<List<Asistente>>(asistentes,HttpStatus.OK);
-    } catch (Exception e) {
-    responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-    }
-    return responseEntity;
+            // Se solicita el listado de asistentes pagignados.
+            try {
+                Page<Asistente> asistentesPaginados = asistenteService.findAll(pageable);
+                asistentes = asistentesPaginados.getContent();
+                responseEntity = new ResponseEntity<List<Asistente>>(asistentes,
+                        HttpStatus.OK);
+            } catch (Exception e) {
+                responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            // Devolver los asistentes ordenados
+            try {
+                asistentes = asistenteService.findAll(sortByLastName);
+                responseEntity = new ResponseEntity<List<Asistente>>(asistentes, HttpStatus.OK);
+            } catch (Exception e) {
+                responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+        }
+        return responseEntity;
     }
 
     // Metodo por el cual se obtienen TODOS los asistentes, SIN paginación
     // @GetMapping
     // public ResponseEntity<List<Asistente>> findAll() {
 
-    //     List<Asistente> asistentes = new ArrayList<>();
+    // List<Asistente> asistentes = new ArrayList<>();
 
-    //     ResponseEntity<List<Asistente>> responseEntity = null;
+    // ResponseEntity<List<Asistente>> responseEntity = null;
 
-    //     asistentes = asistenteService.findAll();
+    // asistentes = asistenteService.findAll();
 
-    //     responseEntity = new ResponseEntity<List<Asistente>>(asistentes, HttpStatus.OK);
+    // responseEntity = new ResponseEntity<List<Asistente>>(asistentes,
+    // HttpStatus.OK);
 
-    //     return responseEntity;
+    // return responseEntity;
     // }
 
     // //Método por el cual el administrador puede obtener un asistente por su id
@@ -136,15 +136,17 @@ public class AsistenteController {
     }
 
     // Metodo que persiste un asistente en la base de datos
-    @PostMapping( consumes = "multipart/form-data" )
+    @PostMapping(consumes = "multipart/form-data")
     @Transactional
-    public ResponseEntity<Map<String, Object>> saveAsistente(@Valid @RequestPart(name = "asistente") Asistente asistente, 
-                                                             BindingResult results,  
-                                                    @RequestPart(name = "file") MultipartFile file) throws IOException {
+    public ResponseEntity<Map<String, Object>> saveAsistente(
+            @Valid @RequestPart(name = "asistente") Asistente asistente,
+            BindingResult results,
+            @RequestPart(name = "file") MultipartFile file) throws IOException {
         Map<String, Object> responseAsMap = new HashMap<>();
         ResponseEntity<Map<String, Object>> responseEntity = null;
 
-        // comprobar si el asistente a llegado con errores, es decir, si esta mal formado
+        // comprobar si el asistente a llegado con errores, es decir, si esta mal
+        // formado
         if (results.hasErrors()) {
 
             List<String> mensajesError = new ArrayList<>();
@@ -165,22 +167,22 @@ public class AsistenteController {
             return responseEntity;
         }
 
-               // Si no hay errores, entonces persistimos el asistente,
-              // comprobando previamente si nos han enviado una imagen
-               // , o un archivo.
-          if(!file.isEmpty()) {
+        // Si no hay errores, entonces persistimos el asistente,
+        // comprobando previamente si nos han enviado una imagen
+        // , o un archivo.
+        if (!file.isEmpty()) {
             String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
-            asistente.setImagenAsistente(fileCode+ "-" + file.getOriginalFilename());
+            asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
 
             // Devolver informacion respecto al file recibido
             FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
-                       .fileName(fileCode + "-" + file.getOriginalFilename())
-                       .downloadURI("/asistentes/downloadFile/" 
-                                 + fileCode + "-" + file.getOriginalFilename())
-                       .size(file.getSize())
-                       .build();
-            
-            responseAsMap.put("info de la imagen: ", fileUploadResponse);           
+                    .fileName(fileCode + "-" + file.getOriginalFilename())
+                    .downloadURI("/asistentes/downloadFile/"
+                            + fileCode + "-" + file.getOriginalFilename())
+                    .size(file.getSize())
+                    .build();
+
+            responseAsMap.put("info de la imagen: ", fileUploadResponse);
 
         }
 
@@ -205,9 +207,10 @@ public class AsistenteController {
     // nuevo)
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updateAsistente(@Valid 
-    @RequestBody Asistente asistente,
+            @RequestPart(name = "asistente") Asistente asistente,
             BindingResult results,
-            @PathVariable(name = "id") Integer idAsistente) {
+            @PathVariable(name = "id") Integer idAsistente,
+            @RequestPart(name = "file") MultipartFile file) throws IOException{
 
         Map<String, Object> responseAsMap = new HashMap<>();
 
@@ -251,7 +254,8 @@ public class AsistenteController {
         return responseEntity;
     }
 
-    // Metodo por el cual el administrador puede eliminar un asistente, recibiendo su id
+    // Metodo por el cual el administrador puede eliminar un asistente, recibiendo
+    // su id
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deleteAsistente(@PathVariable(name = "id") Integer idAsistente) {
 
