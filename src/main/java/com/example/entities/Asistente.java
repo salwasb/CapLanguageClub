@@ -43,6 +43,9 @@ public class Asistente implements Serializable {
     @NotBlank(message = "Le nom ne peut pas être vide")
     private String apellidos;
 
+    private String imagenAsistente;
+
+
     @NotNull(message = "L'email ne peut pas être nul")
     @Pattern(regexp = "(?i)^[A-Z0-9._%+-]+@cap\\.com$", message = "L'e-mail doit avoir le domaine @cap.com")
     private String correo;
