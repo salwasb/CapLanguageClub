@@ -8,10 +8,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -135,7 +130,7 @@ public class AsistenteController {
         return responseEntity;
     }
 
-    // Metodo que persiste un producto en la base de datos
+    // Metodo que persiste un asistente en la base de datos
     @PostMapping( consumes = "multipart/form-data" )
     @Transactional
     public ResponseEntity<Map<String, Object>> saveAsistente(@Valid @RequestPart(name = "asistente") Asistente asistente, 
@@ -144,7 +139,7 @@ public class AsistenteController {
         Map<String, Object> responseAsMap = new HashMap<>();
         ResponseEntity<Map<String, Object>> responseEntity = null;
 
-        // comprobar si el producto a llegado con errores, es decir, si esta mal formado
+        // comprobar si el asistente a llegado con errores, es decir, si esta mal formado
         if (results.hasErrors()) {
 
             List<String> mensajesError = new ArrayList<>();
@@ -165,7 +160,7 @@ public class AsistenteController {
             return responseEntity;
         }
 
-               // Si no hay errores, entonces persistimos el producto,
+               // Si no hay errores, entonces persistimos el asistente,
               // comprobando previamente si nos han enviado una imagen
                // , o un archivo.
           if(!file.isEmpty()) {
