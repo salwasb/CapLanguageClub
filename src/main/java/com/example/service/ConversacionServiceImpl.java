@@ -2,12 +2,13 @@ package com.example.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.dao.AsistenteDao;
 import com.example.dao.ConversacionDao;
-import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
 
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,18 @@ public class ConversacionServiceImpl implements ConversacionService{
        return conversacionDao.save(conversacion);
     }
 
+    @Override
+    public Page<Conversacion> findAll(Pageable pageable) {
+        return conversacionDao.findAll(pageable); 
+    
+    }
+
+    @Override
+    public List<Conversacion> findAll(Sort sort) {
+    
+        return conversacionDao.findAll(sort); 
+    }
 
     
 }
+

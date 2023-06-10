@@ -7,7 +7,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,7 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,10 +29,13 @@ import com.example.entities.Conversacion;
 import com.example.service.AsistenteService;
 import com.example.service.ConversacionService;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/conversations")
+@RequiredArgsConstructor
 public class ConversacionController {
 
     @Autowired
@@ -40,11 +45,26 @@ public class ConversacionController {
     AsistenteService asistenteService;
 
     @GetMapping
-    public ResponseEntity<List<Conversacion>> findAll() {
+    public ResponseEntity<List<Conversacion>> findAll(
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "size", required = false) Integer size) {
 
         List<Conversacion> conversaciones = new ArrayList<>();
-
+        Sort sortByTitulo = Sort.by("titulo");
         ResponseEntity<List<Conversacion>> responseEntity = null;
+
+        // Comprobar si se requiere paginación:
+        if (page != null && size != null) {
+            Pageable pageable = PageRequest.of(page, size, sortByTitulo);
+
+            try {
+                Page<Conversacion> conversacionesPaginadas = conversacionService.findAll(pageable);
+                conversaciones = conversacionesPaginadas.getContent();
+                responseEntity = new ResponseEntity<List<Conversacion>>(conversaciones, HttpStatus.OK);
+            } catch (Exception e) {
+                responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
 
         // Devolver los productos ordenados
         try {
@@ -58,8 +78,10 @@ public class ConversacionController {
     }
 
     // Metodo que persiste una conversacion en la base de datos
-    @PostMapping
-    public ResponseEntity<Map<String, Object>> saveConversation(@Valid @RequestBody Conversacion conversacion,
+    @PostMapping(consumes = "multipart/form-data")
+    @Transactional
+    public ResponseEntity<Map<String, Object>> saveConversation(
+            @Valid @RequestBody Conversacion conversacion,
             BindingResult results) {
 
         Map<String, Object> responseAsMap = new HashMap<>();
@@ -103,7 +125,7 @@ public class ConversacionController {
     // Metodo para recuperar un producto por el id.
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> findByIdProducto(
+    public ResponseEntity<Map<String, Object>> findByIdConversacion(
             @PathVariable(name = "id", required = true) Integer idConversacion) {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
@@ -138,7 +160,7 @@ public class ConversacionController {
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updateConversation(@Valid @RequestBody Conversacion conversacion,
             BindingResult results,
-            @PathVariable(name = "id") Integer idConversacion) {
+            @PathVariable(name = "id") Integer id) {
         Map<String, Object> responseAsMap = new HashMap<>();
         ResponseEntity<Map<String, Object>> responseEntity = null;
 
@@ -163,7 +185,7 @@ public class ConversacionController {
         // Si no hay errores persistimos el producto y devolvemos informacion
 
         try {
-            conversacion.setId(idConversacion);
+            conversacion.setId(id);
             Conversacion conversacionActualizada = conversacionService.save(conversacion);
             String sucessMessage = "La conversation a été mis à jour correctement";
             responseAsMap.put("Mensaje: ", sucessMessage);
@@ -184,24 +206,24 @@ public class ConversacionController {
     // Metodo para eliminar una conversacion cuyo id se recibe como parametro de la
     // peticion
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> deleteConversacion( @PathVariable(name = "id") Integer idAsistente,
-            @PathVariable(name = "id") Integer idConversacion) {
+    public ResponseEntity<Map<String, Object>> deleteConversacion(@PathVariable(name = "idAsistente") Integer idAsistente,
+            @PathVariable(name = "idConversacion") Integer idConversacion) {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
         Map<String, Object> responseAsMap = new HashMap<>();
 
         try {
-        if (idConversacion != null) {
+            if (idConversacion != null) {
 
-            asistenteService.deleteAsistenteById(idAsistente);
-            conversacionService.delete(idConversacion);
+                asistenteService.deleteAsistenteById(idAsistente);
+                conversacionService.delete(idConversacion);
 
-            responseAsMap.put("Message", "La conversation a été supprimée avec succès");
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
-        }
+                responseAsMap.put("Message", "La conversation a été supprimée avec succès");
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
+            }
         } catch (DataAccessException e) {
             responseAsMap.put("Erreur Grave",
-                    "La conversation n'a pas pus être supprimée, a cause de: " + e.getMostSpecificCause());
+                    "La conversation n'a pas pus être supprimée, à cause de: " + e.getMostSpecificCause());
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return responseEntity;
