@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entities.Conversacion;
@@ -157,7 +156,7 @@ public class ConversacionController {
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
             return responseEntity;
-        }
+    }
         // Si no hay errores persistimos el producto y devolvemos informacion
 
         try {
@@ -197,11 +196,13 @@ public class ConversacionController {
             responseAsMap.put("Message", "La conversation a été supprimée avec succès");
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
         
-        } catch (DataAccessException e) {
+        } 
+    }catch (DataAccessException e) {
             responseAsMap.put("Erreur Grave",
                     "La conversation n'a pas pus être supprimée, a cause de: " + e.getMostSpecificCause());
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return responseEntity;
     }
+
 }
