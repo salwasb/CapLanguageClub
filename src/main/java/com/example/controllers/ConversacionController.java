@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -184,21 +182,19 @@ public class ConversacionController {
     // Metodo para eliminar una conversacion cuyo id se recibe como parametro de la
     // peticion
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> deleteConversacion( @PathVariable(name = "id") Integer idAsistente,
+    public ResponseEntity<Map<String, Object>> deleteConversacion(@RequestParam(name = "idAsistente") Integer idAsistente,
             @PathVariable(name = "id") Integer idConversacion) {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
         Map<String, Object> responseAsMap = new HashMap<>();
 
         try {
-        if (idConversacion != null) {
-
             asistenteService.deleteAsistenteById(idAsistente);
             conversacionService.delete(idConversacion);
 
             responseAsMap.put("Message", "La conversation a été supprimée avec succès");
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
-        }
+        
         } catch (DataAccessException e) {
             responseAsMap.put("Erreur Grave",
                     "La conversation n'a pas pus être supprimée, a cause de: " + e.getMostSpecificCause());
