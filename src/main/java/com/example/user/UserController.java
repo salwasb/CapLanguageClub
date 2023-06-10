@@ -25,6 +25,7 @@ public class UserController {
     @Transactional
     public ResponseEntity<User> add(@RequestBody User user) {
         return ResponseEntity.ok(userService.add(user));
+        
     }@GetMapping("/{email}")
     public User getByEmail(@PathVariable("email") String email) {
         return userService.findByEmail(email);

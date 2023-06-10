@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entities.Asistente;
@@ -124,8 +126,11 @@ public class AsistenteController {
 
     // Metodo que persiste un producto en la base de datos
     @PostMapping
-    public ResponseEntity<Map<String, Object>> saveProduct(@Valid @RequestBody Asistente asistente,
+    @Transactional
+    public ResponseEntity<Map<String, Object>> saveAsistente(
+        @Valid @RequestPart(name="asistente") Asistente asistente,
             BindingResult results) {
+       
         Map<String, Object> responseAsMap = new HashMap<>();
         ResponseEntity<Map<String, Object>> responseEntity = null;
 
@@ -172,7 +177,8 @@ public class AsistenteController {
     // (creo que debe de ser casi igual que el de crear/dar de alta un asistente
     // nuevo)
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updateAsistente(@Valid @RequestBody Asistente asistente,
+    public ResponseEntity<Map<String, Object>> updateAsistente(@Valid 
+    @RequestBody Asistente asistente,
             BindingResult results,
             @PathVariable(name = "id") Integer idAsistente) {
 

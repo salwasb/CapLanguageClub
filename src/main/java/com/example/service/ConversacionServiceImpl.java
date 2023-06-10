@@ -32,7 +32,6 @@ public class ConversacionServiceImpl implements ConversacionService{
     @Override
     @Transactional
     public void delete(int idConversacion) {
-        
         conversacionDao.deleteById(idConversacion);
     }
 
@@ -40,6 +39,12 @@ public class ConversacionServiceImpl implements ConversacionService{
     @Transactional
     public Conversacion save(Conversacion conversacion) {
        return conversacionDao.save(conversacion);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAsistenteByIdConversacion(int idConversacion) {
+       conversacionDao.deleteAsistenteByIdConversacion(idConversacion);
     }
 
 

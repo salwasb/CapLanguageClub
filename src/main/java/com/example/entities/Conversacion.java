@@ -72,7 +72,7 @@ public class Conversacion implements Serializable {
     @Enumerated(EnumType.STRING)
     private Nivel nivel;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "conversacion")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "conversacion")
     @JsonIgnore
     private List<Asistente> asistentes;
 }

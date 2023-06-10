@@ -15,8 +15,6 @@ public class SecurityConfig   {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-
-       
     
          return new BCryptPasswordEncoder();
     }
@@ -29,11 +27,11 @@ public class SecurityConfig   {
             .and().authorizeHttpRequests()
             .requestMatchers("/users/**").permitAll()
             .and().authorizeHttpRequests()
-            .requestMatchers(HttpMethod.POST, "/asistentes/**").hasAuthority("ADMINISTRATEUR")
+            .requestMatchers(HttpMethod.POST, "/asistentes/**").hasAuthority("ADMIN")
             .and().authorizeHttpRequests()
-            .requestMatchers(HttpMethod.PUT, "/asistentes/**").hasAuthority("ADMINISTRATEUR")
+            .requestMatchers(HttpMethod.PUT, "/asistentes/**").hasAuthority("ADMIN")
             .and().authorizeHttpRequests()
-            .requestMatchers(HttpMethod.DELETE, "/asistentes/**").hasAuthority("ADMINISTRATEUR")
+            .requestMatchers(HttpMethod.DELETE, "/asistentes/**").hasAuthority("ADMIN")
            .anyRequest().authenticated().and().httpBasic(withDefaults()).build();
      }
     

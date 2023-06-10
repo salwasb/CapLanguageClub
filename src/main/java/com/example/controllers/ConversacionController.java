@@ -184,7 +184,7 @@ public class ConversacionController {
     // Metodo para eliminar una conversacion cuyo id se recibe como parametro de la
     // peticion
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> deleteConversacion( @PathVariable(name = "id") Integer idAsistente,
+    public ResponseEntity<Map<String, Object>> deleteConversacion(
             @PathVariable(name = "id") Integer idConversacion) {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
@@ -193,7 +193,7 @@ public class ConversacionController {
         try {
         if (idConversacion != null) {
 
-            asistenteService.deleteAsistenteById(idAsistente);
+            conversacionService.deleteAsistenteByIdConversacion(idConversacion);
             conversacionService.delete(idConversacion);
 
             responseAsMap.put("Message", "La conversation a été supprimée avec succès");

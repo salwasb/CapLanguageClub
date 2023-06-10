@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
     public User add(User user) {
         Optional<User> theUser = userRepository.findByEmail(user.getEmail());
 
-        if(theUser.isPresent()) {
+        if (theUser.isPresent()) {
             // Deberiamos devolver una exception personalizada
 
             // throw new UsernameNotFoundException()
@@ -31,7 +31,9 @@ public class UserServiceImpl implements UserService {
         // Encriptamos la password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
-    } @Override
+    }
+
+    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }
@@ -44,27 +46,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return userRepository
-            .findByEmail(email)
-            .orElseThrow(() -> 
-               new UsernameNotFoundException("No existe el usuario con el email: " + email));
+                .findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("No existe el usuario con el email: " + email));
     }
 
     @Override
     public User update(User user) {
 
         User existingUser = userRepository.findByEmail(user.getEmail())
-            .orElseThrow(() -> new UsernameNotFoundException("No existe user con dicho email"));
+                .orElseThrow(() -> new UsernameNotFoundException("No existe user con dicho email"));
 
-            existingUser.setFirstName(user.getFirstName());
-            existingUser.setLastName(user.getLastName());
-            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
-            existingUser.setRole(user.getRole());
+        existingUser.setFirstName(user.getFirstName());
+        existingUser.setLastName(user.getLastName());
+        existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        existingUser.setRole(user.getRole());
 
-            User userUpdated = userRepository.save(existingUser);
+        User userUpdated = userRepository.save(existingUser);
 
-            return userUpdated;
-        
-        }
-        
+        return userUpdated;
+
     }
 
+}

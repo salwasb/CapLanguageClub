@@ -9,5 +9,6 @@ public interface ConversacionService {
     public Conversacion findById(int idConversacion);
     public void delete(int idConversacion);
     public Conversacion save (Conversacion conversacion); 
+    public void deleteAsistenteByIdConversacion(int idConversacion);
    
 }
