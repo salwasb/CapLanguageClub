@@ -19,14 +19,6 @@ import com.example.service.ConversacionService;
 @Configuration
 public class LoadDataBase {
 
-    // public static void increment(){
-    // int count=0;
-    // count++;
-    // }
-    // public static void decrement(){
-    // int count=0;
-    // count--;
-    // }
     @Bean
     public CommandLineRunner sampleData(ConversacionService conversacionService,
             AsistenteService asistentesService) {

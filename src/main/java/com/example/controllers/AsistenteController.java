@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -40,15 +38,13 @@ import com.example.utilities.FileUploadUtil;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/asistentes")
 @RequiredArgsConstructor
 public class AsistenteController {
 
-    @Autowired
-    private AsistenteService asistenteService;
-
+    private final AsistenteService asistenteService;
+        
     private final FileUploadUtil fileUploadUtil;
 
     private final FileDownloadUtil fileDownloadUtil;
@@ -152,6 +148,8 @@ public class AsistenteController {
         // formado
         if (results.hasErrors()) {
 
+            while(asistente.getConversacion().getFecha() != asistente.getConversacion().getFecha()){
+
             List<String> mensajesError = new ArrayList<>();
 
             // quiero recorrer los resultados de la validacion y extraer los mensajes por
@@ -166,8 +164,12 @@ public class AsistenteController {
             responseAsMap.put("asistente: ", asistente);
 
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
-
+            // while (responseEntity != null){
+            // asistente.increment();
+            // asistente.getConversacion().getNumeroAsistentes() = asistente.getCount();
+            // }
             return responseEntity;
+        }
         }
 
         // Si no hay errores, entonces persistimos el asistente,
@@ -209,11 +211,13 @@ public class AsistenteController {
     // (creo que debe de ser casi igual que el de crear/dar de alta un asistente
     // nuevo)
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updateAsistente(@Valid 
+    @Transactional
+    public ResponseEntity<Map<String, Object>> updateAsistente(
+            @Valid 
             @RequestPart(name = "asistente") Asistente asistente,
-            BindingResult results,
             @PathVariable(name = "id") Integer idAsistente,
-            @RequestPart(name = "file") MultipartFile file) throws IOException{
+            BindingResult results,
+            @RequestPart(name = "file") MultipartFile file){
 
         Map<String, Object> responseAsMap = new HashMap<>();
 
@@ -275,6 +279,10 @@ public class AsistenteController {
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        //   while (responseEntity == null){
+        //     asistente.increment();
+        //     asistente.getConversacion().getNumeroAsistentes() = asistente.getCount();
+        //     }
         return responseEntity;
     }
       @GetMapping("/downloadFile/{fileCode}")

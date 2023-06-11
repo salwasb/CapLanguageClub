@@ -57,4 +57,12 @@ public class Asistente implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Conversacion conversacion;
+
+    int count = 0;
+    public void increment(){
+    count++;
+    }
+    public void decrement(){
+    count--;
+    }
 }
