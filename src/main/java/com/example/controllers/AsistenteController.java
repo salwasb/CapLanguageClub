@@ -280,7 +280,7 @@ public class AsistenteController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
         //   while (responseEntity == null){
-        //     asistente.increment();
+        //     asistente.decrement();
         //     asistente.getConversacion().getNumeroAsistentes() = asistente.getCount();
         //     }
         return responseEntity;
