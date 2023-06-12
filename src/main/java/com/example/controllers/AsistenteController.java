@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.entities.Asistente;
+import com.example.entities.Conversacion;
 import com.example.model.FileUploadResponse;
 import com.example.service.AsistenteService;
 import com.example.utilities.FileDownloadUtil;
@@ -40,14 +42,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/asistentes")
-@RequiredArgsConstructor
 public class AsistenteController {
 
-    private final AsistenteService asistenteService;
-        
-    private final FileUploadUtil fileUploadUtil;
-
-    private final FileDownloadUtil fileDownloadUtil;
+    @Autowired
+    private AsistenteService asistenteService;
+    @Autowired
+    private FileUploadUtil fileUploadUtil;
+    @Autowired
+    private FileDownloadUtil fileDownloadUtil;
 
     // Metodo por el cual se obtienen TODOS los asistentes, con paginación
 
@@ -148,7 +150,7 @@ public class AsistenteController {
         // formado
         if (results.hasErrors()) {
 
-            while(asistente.getConversacion().getFecha() != asistente.getConversacion().getFecha()){
+           // while(asistente.getConversacion().getFecha() != asistente.getConversacion().getFecha()){
 
             List<String> mensajesError = new ArrayList<>();
 
@@ -167,43 +169,49 @@ public class AsistenteController {
 
             while (asistente != null){
             asistente.increment();
-            asistente.getConversacion().setNumeroAsistentes(asistente.getCount());
+                asistente.getConversacion().stream()
+                .mapToInt(Conversacion::getNumeroAsistentes)
+                .equals(asistente.getCount());
             }
             return responseEntity;
-        }
-        }
-
-        // Si no hay errores, entonces persistimos el asistente,
-        // comprobando previamente si nos han enviado una imagen
-        // , o un archivo.
-        if (!file.isEmpty()) {
-            String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
-            asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
-
-            // Devolver informacion respecto al file recibido
-            FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
-                    .fileName(fileCode + "-" + file.getOriginalFilename())
-                    .downloadURI("/asistentes/downloadFile/"
-                            + fileCode + "-" + file.getOriginalFilename())
-                    .size(file.getSize())
-                    .build();
-
-            responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
+        // }
         }
 
-        try {
-            Asistente asistentePersistido = asistenteService.saveAsistente(asistente);
-            String successMessage = "L'assistant a été créé avec succès";
-            responseAsMap.put("Mensage: ", successMessage);
-            responseAsMap.put("Asistant:", asistentePersistido);
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
-        } catch (DataAccessException e) {
-            String errorMessage = "L'assistant n'a pas pu être conservé et la cause la plus probable de l'erreur est: "
-                    + e.getMostSpecificCause();
-            responseAsMap.put("Erreur", errorMessage);
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return responseEntity;
+    // Si no hay errores, entonces persistimos el asistente,
+    // comprobando previamente si nos han enviado una imagen
+    // , o un archivo.
+    if(!file.isEmpty())
+
+    {
+        String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
+        asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
+
+        // Devolver informacion respecto al file recibido
+        FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
+                .fileName(fileCode + "-" + file.getOriginalFilename())
+                .downloadURI("/asistentes/downloadFile/"
+                        + fileCode + "-" + file.getOriginalFilename())
+                .size(file.getSize())
+                .build();
+
+        responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
+    }
+
+    try
+    {
+        Asistente asistentePersistido = asistenteService.saveAsistente(asistente);
+        String successMessage = "L'assistant a été mis à jour correctement";
+        responseAsMap.put("Mensage: ", successMessage);
+        responseAsMap.put("Asistant:", asistentePersistido);
+        responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
+    }catch(
+    DataAccessException e)
+    {
+        String errorMessage = "L'assistant n'a pas pu être conservé et la cause la plus probable de l'erreur est: "
+                + e.getMostSpecificCause();
+        responseAsMap.put("Erreur", errorMessage);
+        responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
+    }return responseEntity;
     }
 
     // Metodo por el cual el administrador puede modificar un asistente, recibiendo
@@ -217,7 +225,7 @@ public class AsistenteController {
             @RequestPart(name = "asistente") Asistente asistente,
             @PathVariable(name = "id") Integer idAsistente,
             BindingResult results,
-            @RequestPart(name = "file") MultipartFile file){
+            @RequestPart(name = "file") MultipartFile file) throws IOException{
 
         Map<String, Object> responseAsMap = new HashMap<>();
 
@@ -258,6 +266,22 @@ public class AsistenteController {
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+         if(!file.isEmpty())
+
+    {
+        String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
+        asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
+
+        // Devolver informacion respecto al file recibido
+        FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
+                .fileName(fileCode + "-" + file.getOriginalFilename())
+                .downloadURI("/asistentes/downloadFile/"
+                        + fileCode + "-" + file.getOriginalFilename())
+                .size(file.getSize())
+                .build();
+
+        responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
+    }
         return responseEntity;
     }
 
@@ -283,11 +307,14 @@ public class AsistenteController {
         }
           while (asistente == null){
             asistente.decrement();
-            asistente.getConversacion().setNumeroAsistentes(asistente.getCount());
+             asistente.getConversacion().stream()
+                .mapToInt(Conversacion::getNumeroAsistentes)
+                .equals(asistente.getCount());
             }
         return responseEntity;
     }
-      @GetMapping("/downloadFile/{fileCode}")
+
+    @GetMapping("/downloadFile/{fileCode}")
     public ResponseEntity<?> downloadFile(@PathVariable(name = "fileCode") String fileCode) {
 
         Resource resource = null;

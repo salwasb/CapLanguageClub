@@ -1,9 +1,12 @@
 package com.example.entities;
 
 import java.io.Serializable;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,6 +15,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -55,10 +59,11 @@ public class Asistente implements Serializable {
     @NotNull(message = "La langue ne peut pas être nul")
      private Idioma idioma; 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "asistentes")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Conversacion conversacion;
+    private List<Conversacion> conversacion;
 
+    @JsonIgnore
     int count = 2;
     public void increment(){
     count++;

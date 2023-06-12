@@ -20,13 +20,12 @@ public class ConversacionServiceImpl implements ConversacionService{
    
     @Override
     public List<Conversacion> findAll() {
-
         return  conversacionDao.findAll();
     }
 
     @Override
     public Conversacion findById(int idConversacion) {
-        return conversacionDao.findById(idConversacion).orElse(null);
+        return conversacionDao.findById(idConversacion).get();
     }
 
     @Override

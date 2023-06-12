@@ -1,6 +1,7 @@
 package com.example.controllers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,20 +38,19 @@ public class ConversacionController {
     AsistenteService asistenteService;
 
     @GetMapping
-    public ResponseEntity<List<Conversacion>> findAll() {
+    public ResponseEntity<List<List<Conversacion>>> findAll() {
 
         List<Conversacion> conversaciones = new ArrayList<>();
 
-        ResponseEntity<List<Conversacion>> responseEntity = null;
+        ResponseEntity<List<List<Conversacion>>> responseEntity = null;
 
         // Devolver los productos ordenados
         try {
             conversaciones = conversacionService.findAll();
-            responseEntity = new ResponseEntity<List<Conversacion>>(conversaciones, HttpStatus.OK);
+            responseEntity = new ResponseEntity<>(Collections.singletonList(conversaciones), HttpStatus.OK);
         } catch (Exception e) {
             responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-
         return responseEntity;
     }
 
@@ -100,7 +100,7 @@ public class ConversacionController {
     // Metodo para recuperar un producto por el id.
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> findByIdProducto(
+    public ResponseEntity<Map<String, Object>> findByIdCOnversacion(
             @PathVariable(name = "id", required = true) Integer idConversacion) {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
