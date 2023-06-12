@@ -3,8 +3,10 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,18 +23,16 @@ public class SecurityConfig   {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        return http.csrf().disable()
-            .authorizeHttpRequests()
-            .requestMatchers(HttpMethod.GET, "/asistentes/**").permitAll()
-            .and().authorizeHttpRequests()
-            .requestMatchers("/users/**").permitAll()
-            .and().authorizeHttpRequests()
-            .requestMatchers(HttpMethod.POST, "/asistentes/**").hasAuthority("ADMIN")
-            .and().authorizeHttpRequests()
-            .requestMatchers(HttpMethod.PUT, "/asistentes/**").hasAuthority("ADMIN")
-            .and().authorizeHttpRequests()
-            .requestMatchers(HttpMethod.DELETE, "/asistentes/**").hasAuthority("ADMIN")
-           .anyRequest().authenticated().and().httpBasic(withDefaults()).build();
+        return http
+        .csrf(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(auth -> {
+            auth.requestMatchers(HttpMethod.GET, "/asistentes/**").permitAll();
+            auth.requestMatchers("/users/**").permitAll();
+            auth.requestMatchers(HttpMethod.POST, "/asistentes/**").hasAuthority("ADMIN");
+            auth.requestMatchers(HttpMethod.PUT, "/asistentes/**").hasAuthority("ADMIN");
+            auth.requestMatchers(HttpMethod.DELETE, "/asistentes/**").hasAuthority("ADMIN");
+            auth.anyRequest().authenticated();
+            }).httpBasic(Customizer.withDefaults()).build();
      }
     
 }
