@@ -164,10 +164,12 @@ public class AsistenteController {
             responseAsMap.put("asistente: ", asistente);
 
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+
             // while (responseEntity != null){
             // asistente.increment();
             // asistente.getConversacion().getNumeroAsistentes() = asistente.getCount();
             // }
+
             return responseEntity;
         }
         }

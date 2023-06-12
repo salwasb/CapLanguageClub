@@ -48,6 +48,7 @@ public class Asistente implements Serializable {
 
     @NotNull(message = "L'email ne peut pas être nul")
     @Pattern(regexp = "(?i)^[A-Z0-9._%+-]+@cap\\.com$", message = "L'e-mail doit avoir le domaine @cap.com")
+    // @email(regexp = /^[a-zA-Z0-9._%+-]{2,6}@(cap)\.com$/)
     private String correo;
     
     @Enumerated(EnumType.STRING)
@@ -58,7 +59,7 @@ public class Asistente implements Serializable {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Conversacion conversacion;
 
-    int count = 0;
+    int count = 2;
     public void increment(){
     count++;
     }

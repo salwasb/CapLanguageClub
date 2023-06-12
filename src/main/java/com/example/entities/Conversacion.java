@@ -55,11 +55,11 @@ public class Conversacion implements Serializable {
     @Max(value = 8, message = "Le nombre d'assistants ne peut pas etre superieur a huit")
     private int numeroAsistentes;
 
-   // // @Future
+    @Future
     @NotNull(message = "La date ne peut pas être nul")
     private LocalDate fecha;
 
-    // //@Future
+    @Future
     @NotNull(message = "L'heure ne peut pas être nul")
     private LocalTime hora;
 
@@ -72,6 +72,17 @@ public class Conversacion implements Serializable {
     @Enumerated(EnumType.STRING)
     private Nivel nivel;
 
+    private String inmutable;
+
+    private void Nivel (String inmutable){
+        this.inmutable=inmutable;
+    }
+    public String getInmutable(){
+        return inmutable;
+    }
+    public void setInmutable(String inmutable){
+        this.inmutable= inmutable;
+    }
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "conversacion")
     @JsonIgnore
     private List<Asistente> asistentes;
