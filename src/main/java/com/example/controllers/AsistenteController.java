@@ -103,6 +103,7 @@ public class AsistenteController {
     // }
 
     // //Método por el cual el administrador puede obtener un asistente por su id
+
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> findAsistenteById(
             @PathVariable(name = "id", required = true) Integer idAsistente) {
@@ -130,7 +131,6 @@ public class AsistenteController {
             responseAsMap.put("Erreur Grave", errorMessage);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         return responseEntity;
     }
 
@@ -165,11 +165,10 @@ public class AsistenteController {
 
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
-            // while (responseEntity != null){
-            // asistente.increment();
-            // asistente.getConversacion().getNumeroAsistentes() = asistente.getCount();
-            // }
-
+            while (asistente != null){
+            asistente.increment();
+            asistente.getConversacion().setNumeroAsistentes(asistente.getCount());
+            }
             return responseEntity;
         }
         }
@@ -190,7 +189,6 @@ public class AsistenteController {
                     .build();
 
             responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
-
         }
 
         try {
@@ -270,6 +268,8 @@ public class AsistenteController {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
         Map<String, Object> responseAsMap = new HashMap<>();
+        Asistente asistente =  asistenteService.findById(idAsistente);
+        
 
         try {
             asistenteService.deleteAsistente(asistenteService.findById(idAsistente));
@@ -281,10 +281,10 @@ public class AsistenteController {
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        //   while (responseEntity == null){
-        //     asistente.decrement();
-        //     asistente.getConversacion().getNumeroAsistentes() = asistente.getCount();
-        //     }
+          while (asistente == null){
+            asistente.decrement();
+            asistente.getConversacion().setNumeroAsistentes(asistente.getCount());
+            }
         return responseEntity;
     }
       @GetMapping("/downloadFile/{fileCode}")

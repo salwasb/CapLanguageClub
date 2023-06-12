@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.customsExceptions.ResourceNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,11 +23,8 @@ public class UserServiceImpl implements UserService {
         Optional<User> theUser = userRepository.findByEmail(user.getEmail());
 
         if (theUser.isPresent()) {
-            // Deberiamos devolver una exception personalizada
 
-            // throw new UsernameNotFoundException()
-            return null;
-
+            throw new ResourceNotFoundException("Ya existe un user con dicho email");
         }
 
         // Encriptamos la password

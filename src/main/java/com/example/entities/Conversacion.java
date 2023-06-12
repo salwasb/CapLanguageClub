@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -22,6 +24,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -72,17 +75,17 @@ public class Conversacion implements Serializable {
     @Enumerated(EnumType.STRING)
     private Nivel nivel;
 
-    private String inmutable;
+    // private String inmutable;
 
-    private void Nivel (String inmutable){
-        this.inmutable=inmutable;
-    }
-    public String getInmutable(){
-        return inmutable;
-    }
-    public void setInmutable(String inmutable){
-        this.inmutable= inmutable;
-    }
+    // private void Nivel (String inmutable){
+    //     this.inmutable=inmutable;
+    // }
+    // public String getInmutable(){
+    //     return inmutable;
+    // }
+    // public void setInmutable(String inmutable){
+    //     this.inmutable= inmutable;
+    // }
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "conversacion")
     @JsonIgnore
     private List<Asistente> asistentes;
