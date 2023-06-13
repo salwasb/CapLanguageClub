@@ -199,9 +199,10 @@ public class AsistenteController {
     // (creo que debe de ser casi igual que el de crear/dar de alta un asistente
     // nuevo)
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updateAsistente(@Valid @RequestBody Asistente asistente,
-            BindingResult results,
-            @PathVariable(name = "id") Integer idAsistente) {
+    public ResponseEntity<Map<String, Object>> updateAsistente(@Valid @RequestPart(name = "asistente") Asistente asistente,
+            BindingResult results, 
+            @PathVariable(name = "id") Integer idAsistente, 
+            @RequestPart(name = "file") MultipartFile file) throws IOException {
 
         Map<String, Object> responseAsMap = new HashMap<>();
 
@@ -220,18 +221,35 @@ public class AsistenteController {
                 mensajesError.add(objectError.getDefaultMessage());
             }
 
-            responseAsMap.put("Asistant: ", asistente);
+            responseAsMap.put("asistente: ", asistente);
             responseAsMap.put("Erreur: ", mensajesError);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
             return responseEntity;
         }
+
+          if(!file.isEmpty()) {
+            String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
+            asistente.setImagenAsistente(fileCode+ "-" + file.getOriginalFilename());
+
+            // Devolver informacion respecto al file recibido
+            FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
+                       .fileName(fileCode + "-" + file.getOriginalFilename())
+                       .downloadURI("/asistentes/downloadFile/" 
+                                 + fileCode + "-" + file.getOriginalFilename())
+                       .size(file.getSize())
+                       .build();
+            
+            responseAsMap.put("info de la imagen: ", fileUploadResponse);           
+
+        }
+
         // Si no hay errores persistimos/guardamos el asistente y devolvemos informacion
         try {
             asistente.setId(idAsistente);
             Asistente asistenteActualizado = asistenteService.saveAsistente(asistente);
 
-            String successMessage = "L'assistant a été créé avec succès";
+            String successMessage = "L'assistant a été actualizé avec succès";
             responseAsMap.put("Mensage: ", successMessage);
             responseAsMap.put("Asistant", asistenteActualizado);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
