@@ -59,11 +59,11 @@ public class Conversacion implements Serializable {
     @Max(value = 8, message = "Le nombre d'assistants ne peut pas etre superieur a huit")
     private int numeroAsistentes;
 
-    // @Future
+    @Future
     @NotNull(message = "La date ne peut pas être nul")
     private LocalDate fecha;
 
-    // @Future
+    @Future
     @NotNull(message = "L'heure ne peut pas être nul")
     private LocalTime hora;
 

@@ -27,6 +27,7 @@ public class SecurityConfig   {
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> {
             auth.requestMatchers(HttpMethod.GET, "/asistentes/**").permitAll();
+            auth.requestMatchers(HttpMethod.GET, "/conversations/**").permitAll();
             auth.requestMatchers("/users/**").permitAll();
             auth.requestMatchers(HttpMethod.POST, "/asistentes/**").hasAuthority("ADMIN");
             auth.requestMatchers(HttpMethod.PUT, "/asistentes/**").hasAuthority("ADMIN");

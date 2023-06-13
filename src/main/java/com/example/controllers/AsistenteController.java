@@ -293,7 +293,6 @@ public class AsistenteController {
         ResponseEntity<Map<String, Object>> responseEntity = null;
         Map<String, Object> responseAsMap = new HashMap<>();
         Asistente asistente =  asistenteService.findById(idAsistente);
-        
 
         try {
             asistenteService.deleteAsistente(asistenteService.findById(idAsistente));
@@ -307,10 +306,13 @@ public class AsistenteController {
         }
           while (asistente == null){
             asistente.decrement();
-             asistente.getConversacion().stream()
-                .mapToInt(Conversacion::getNumeroAsistentes)
-                .equals(asistente.getCount());
-            }
+            // int numero =  asistente.getConversacion().stream()
+            //     .mapToInt(Conversacion::getNumeroAsistentes)
+            //     .close();
+            
+            Conversacion conversacion = asistente.getConversacion().get(idAsistente);
+            conversacion.setNumeroAsistentes(asistente.getCount());
+          }
         return responseEntity;
     }
 
