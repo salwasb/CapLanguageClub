@@ -52,7 +52,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.FRANCES)
                                         .nivel(Nivel.A)
-                                        .numeroAsistentes(5)
+                                        .numeroAsistentes(4)
                                         .build();
 
                         Conversacion conversacion2 = Conversacion.builder()
@@ -64,7 +64,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.INGLES)
                                         .nivel(Nivel.SINNIVEL)
-                                        .numeroAsistentes(5)
+                                        .numeroAsistentes(4)
                                         .build();
 
                         Conversacion conversacion3 = Conversacion.builder()
@@ -88,7 +88,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.FRANCES)
                                         .nivel(Nivel.C)
-                                        .numeroAsistentes(5)
+                                        .numeroAsistentes(3)
                                         .build();
 
                         Conversacion conversacion5 = Conversacion.builder()
@@ -100,7 +100,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.INGLES)
                                         .nivel(Nivel.NATIVO)
-                                        .numeroAsistentes(5)
+                                        .numeroAsistentes(2)
                                         .build();
 
                         conversacionesAsistente1.add(conversacion1);

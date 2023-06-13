@@ -2,6 +2,7 @@ package com.example.controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,13 +82,36 @@ public class AsistenteController {
             try {
                 asistentes = asistenteService.findAll(sortByLastName);
                 responseEntity = new ResponseEntity<List<Asistente>>(asistentes, HttpStatus.OK);
+
+            //  ResponseEntity<List<Conversacion>> responseEntity2;
+            //   Map<String, List<Conversacion>> responseAsMap = new HashMap<>();
+            //         Asistente asistente = new Asistente();
+        
+            // List<Conversacion> conversaciones = asistente.getConversacion(); 
+            // responseEntity2 = new ResponseEntity<List<Conversacion>>(conversaciones, HttpStatus.OK);
+
+            // responseAsMap.put("Informations sur les conversations: ", conversaciones);
+
+            //  List<Conversacion> conversaciones = new ArrayList<>();
+            //     Map<String, List<Conversacion>> responseAsMap = new HashMap<>();
+
+                
+            //     //Conversacion conversaciones= null;
+            //    for(Conversacion conversaciones : asistente.getConversacion()){
+            //     conversaciones.getTitulo();
+            //     conversaciones.getIdioma();
+            //   }
+
+                //responseAsMap.put("Informations sur les conversations: ", conversaciones);
+
             } catch (Exception e) {
                 responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
         }
+    
         return responseEntity;
     }
-
+            
     // Metodo por el cual se obtienen TODOS los asistentes, SIN paginación
     // @GetMapping
     // public ResponseEntity<List<Asistente>> findAll() {
@@ -167,11 +191,16 @@ public class AsistenteController {
 
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
+            int idAsistente = asistente.getId();
             while (asistente != null){
             asistente.increment();
-                asistente.getConversacion().stream()
-                .mapToInt(Conversacion::getNumeroAsistentes)
-                .equals(asistente.getCount());
+
+                // asistente.getConversacion().stream()
+                // .mapToInt(Conversacion::getNumeroAsistentes)
+                // .equals(asistente.getCount());
+
+            // Conversacion conversacion = asistente.getConversacion().get(idAsistente);
+            // conversacion.setNumeroAsistentes(asistente.getCount());
             }
             return responseEntity;
         // }
@@ -180,9 +209,8 @@ public class AsistenteController {
     // Si no hay errores, entonces persistimos el asistente,
     // comprobando previamente si nos han enviado una imagen
     // , o un archivo.
-    if(!file.isEmpty())
-
-    {
+    if(!file.isEmpty()) {
+        
         String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
         asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
 
@@ -306,12 +334,12 @@ public class AsistenteController {
         }
           while (asistente == null){
             asistente.decrement();
-            // int numero =  asistente.getConversacion().stream()
+            // asistente.getConversacion().stream()
             //     .mapToInt(Conversacion::getNumeroAsistentes)
-            //     .close();
+            //     .
             
-            Conversacion conversacion = asistente.getConversacion().get(idAsistente);
-            conversacion.setNumeroAsistentes(asistente.getCount());
+            // Conversacion conversacion = asistente.getConversacion().get(idAsistente);
+            // conversacion.setNumeroAsistentes(asistente.getCount());
           }
         return responseEntity;
     }
