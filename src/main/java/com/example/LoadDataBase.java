@@ -42,7 +42,7 @@ public class LoadDataBase {
                                         .id(1)
                                         .firstName("Yak")
                                         .lastName("Rhom")
-                                        .email("y@cap.com")
+                                        .email("yaku@cap.com")
                                         .password("Temp2023$$")
                                         .role(Role.ADMIN)
                                         .build());

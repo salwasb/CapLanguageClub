@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -26,8 +26,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.dto.dto;
 import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
+import com.example.entities.Idioma;
+import com.example.entities.Nivel;
 import com.example.model.FileUploadResponse;
 import com.example.service.AsistenteService;
 import com.example.service.ConversacionService;
@@ -153,49 +156,69 @@ public class ConversacionController {
     // Metodo que actualiza una conversacion dado el id de la misma
     // Es basicamente igual al de persistir una conversacion nueva
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updateConversation(@Valid @RequestBody Conversacion conversacion,
-            BindingResult results,
-            @PathVariable(name = "id") Integer idConversacion) {
-        Map<String, Object> responseAsMap = new HashMap<>();
-        ResponseEntity<Map<String, Object>> responseEntity = null;
 
-        // Comprobar si el producto ha llegado con errores, es decir si está mal formado
-        if (results.hasErrors()) {
 
-            List<String> mensajesError = new ArrayList<>();
-
-            // Quiero recorrer los resultados de la validacion y extraer los mensajes por
-            // defecto
-            for (ObjectError objectError : results.getAllErrors()) {
-                mensajesError.add(objectError.getDefaultMessage());
-            }
-
-            responseAsMap.put("Erreur: ", mensajesError);
-            responseAsMap.put("Conversation: ", conversacion);
-
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
-
-            return responseEntity;
-        }
-        // Si no hay errores persistimos el producto y devolvemos informacion
-
-        try {
-            conversacion.setId(idConversacion);
-            Conversacion conversacionActualizada = conversacionService.save(conversacion);
-            String sucessMessage = "La conversation a été mis à jour correctement";
-            responseAsMap.put("Mensaje: ", sucessMessage);
-            responseAsMap.put("Conversation", conversacionActualizada);
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
-        } catch (DataAccessException e) {
-            String errorMessage = "La conversation n'a pas pu être mis à jour et la causa la plus probable de l'erreur est: "
-                    + e.getMostSpecificCause();
-
-            responseAsMap.put("Erreur: ", errorMessage);
-
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return responseEntity;
+public ResponseEntity<Conversacion> actualizarConversacion(
+        @PathVariable int id,
+        @RequestBody dto dto) {
+    
+    Conversacion conversacionExistente = conversacionService.findById(id);
+    
+    if (conversacionExistente == null) {
+        return ResponseEntity.notFound().build();
     }
+    
+    // Copiar los datos del DTO a la entidad Conversacion, excluyendo nivel e idioma
+    BeanUtils.copyProperties(dto, conversacionExistente, "nivel", "idioma");
+    
+    Conversacion conversacionActualizada = conversacionService.save(conversacionExistente);
+    
+    return ResponseEntity.ok(conversacionActualizada);
+}
+    // public ResponseEntity<Map<String, Object>> updateConversation(@Valid 
+    // @RequestBody Conversacion conversacion,
+    //         BindingResult results,
+    //         @PathVariable(name = "id") Integer idConversacion) {
+
+    //     Map<String, Object> responseAsMap = new HashMap<>();
+    //     ResponseEntity<Map<String, Object>> responseEntity = null;
+
+    //     // Comprobar si el producto ha llegado con errores, es decir si está mal formado
+    //     if (results.hasErrors()) {
+
+    //         List<String> mensajesError = new ArrayList<>();
+
+    //         // Quiero recorrer los resultados de la validacion y extraer los mensajes por
+    //         // defecto
+    //         for (ObjectError objectError : results.getAllErrors()) {
+    //             mensajesError.add(objectError.getDefaultMessage());
+    //         }
+    //         String sucessMessage = "Le niveau et le langue ne peut mis à jour pas";
+    //         responseAsMap.put("Erreur: ", mensajesError);
+    //         responseAsMap.put("Conversation: ", conversacion);
+    //         responseAsMap.put("Niveau et langue", sucessMessage);
+
+    //         responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+
+    //         return responseEntity;
+    //     }
+    //     try {
+    //         conversacion.setId(idConversacion);
+    //         Conversacion conversacionActualizada = conversacionService.save(conversacion);
+    //         String sucessMessage = "La conversation a été mis à jour correctement";
+    //         responseAsMap.put("Mensaje: ", sucessMessage);
+    //         responseAsMap.put("Conversation", conversacionActualizada);
+    //         responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
+    //     } catch (DataAccessException e) {
+    //         String errorMessage = "La conversation n'a pas pu être mis à jour et la causa la plus probable de l'erreur est: "
+    //                 + e.getMostSpecificCause();
+
+    //         responseAsMap.put("Erreur: ", errorMessage);
+
+    //         responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
+    //     }
+    //     return responseEntity;
+    // }
 
     // Metodo para eliminar una conversacion cuyo id se recibe como parametro de la
     // peticion
@@ -257,7 +280,6 @@ public class ConversacionController {
         responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
     }
 
-    
         Conversacion conversacion = conversacionService.findById(idConversacion);
         
         if(conversacion.getAsistentes().size() <= 8){
@@ -270,7 +292,6 @@ public class ConversacionController {
             responseAsMap.put("Erreur: ", errorMessage);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);  
         }
-        
 
         return responseEntity; 
 

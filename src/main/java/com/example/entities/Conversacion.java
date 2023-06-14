@@ -6,7 +6,11 @@ import java.time.LocalTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,22 +22,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 @Table(name = "conversaciones")
-
+@JsonIgnoreProperties(value = {"nivel","idioma"}, allowGetters = true)
 public class Conversacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,9 +51,6 @@ public class Conversacion implements Serializable {
     @NotBlank(message = "Le lieu ne peut pas être vide")
     private String lugar;
 
-    // @NotNull(message = "Le nombre d'assistants ne peut pas être null")
-    // @Min(value = 2, message = "Le nombre d'assistants ne peut pas etre inferieur a deux")
-    // @Max(value = 8, message = "Le nombre d'assistants ne peut pas etre superieur a huit")
     private int numeroAsistentes;
 
     @Future
@@ -67,25 +65,26 @@ public class Conversacion implements Serializable {
     private Modo modo;
 
     @Enumerated(EnumType.STRING)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Idioma idioma;
 
     @Enumerated(EnumType.STRING)
+   // @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Nivel nivel;
 
-    // private String inmutable;
-
-    // private void Nivel (String inmutable){
-    // this.inmutable=inmutable;
-    // }
-    // public String getInmutable(){
-    // return inmutable;
-    // }
-    // public void setInmutable(String inmutable){
-    // this.inmutable= inmutable;
-    // }
     @ManyToMany(fetch = FetchType.LAZY)
-
     @JsonBackReference
     private List<Asistente> asistentes;
 
+    @Enumerated(EnumType.STRING)
+    @JsonProperty("idioma")
+    public Idioma getIdioma() {
+        return idioma;
+    }
+
+    @Enumerated(EnumType.STRING)
+    @JsonProperty("nivel")
+    public Nivel getNivel() {
+        return nivel;
+    }
 }

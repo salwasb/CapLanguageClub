@@ -188,17 +188,7 @@ public class AsistenteController {
 
             return responseEntity;
         }
-
-        List<Integer> ids = asistente.getConversacion().stream().map(Conversacion :: getId).toList();
         
-        for (int id : ids){
-        Conversacion conversacion = conversacionService.findById(id);
-        int dias = conversacion.getFecha().getDayOfMonth();
-       
-        List <Integer> diasDistintos = asistente.getConversacion().stream()
-        .filter(c -> !c.getFecha().equals(dias))
-        .map(c -> c.getFecha().getDayOfMonth()).toList();
-    }
         // Si no hay errores, entonces persistimos el asistente,
         // comprobando previamente si nos han enviado una imagen
         // , o un archivo.
