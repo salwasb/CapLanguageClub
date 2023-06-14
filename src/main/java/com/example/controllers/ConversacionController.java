@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.dto.ConversacionDto;
 import com.example.dto.dto;
 import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
@@ -51,7 +52,6 @@ public class ConversacionController {
 
     @Autowired
     private FileUploadUtil fileUploadUtil;
-
 
     @GetMapping
     public ResponseEntity<List<List<Conversacion>>> findAll() {
@@ -156,68 +156,72 @@ public class ConversacionController {
     // Metodo que actualiza una conversacion dado el id de la misma
     // Es basicamente igual al de persistir una conversacion nueva
     @PutMapping("/{id}")
+    public ResponseEntity<Conversacion> updateConversacion(
+            @PathVariable int id,
+            @RequestBody dto dto) {
 
+        Conversacion conversacionExistente = conversacionService.findById(id);
 
-public ResponseEntity<Conversacion> actualizarConversacion(
-        @PathVariable int id,
-        @RequestBody dto dto) {
-    
-    Conversacion conversacionExistente = conversacionService.findById(id);
-    
-    if (conversacionExistente == null) {
-        return ResponseEntity.notFound().build();
+        if (conversacionExistente == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Copiar los datos del DTO a la entidad Conversacion, excluyendo nivel e idioma
+        BeanUtils.copyProperties(dto, conversacionExistente, "nivel", "idioma");
+
+        Conversacion conversacionActualizada = conversacionService.save(conversacionExistente);
+
+        return ResponseEntity.ok(conversacionActualizada);
     }
-    
-    // Copiar los datos del DTO a la entidad Conversacion, excluyendo nivel e idioma
-    BeanUtils.copyProperties(dto, conversacionExistente, "nivel", "idioma");
-    
-    Conversacion conversacionActualizada = conversacionService.save(conversacionExistente);
-    
-    return ResponseEntity.ok(conversacionActualizada);
-}
-    // public ResponseEntity<Map<String, Object>> updateConversation(@Valid 
+    // public ResponseEntity<Map<String, Object>> updateConversation(@Valid
     // @RequestBody Conversacion conversacion,
-    //         BindingResult results,
-    //         @PathVariable(name = "id") Integer idConversacion) {
+    // BindingResult results,
+    // @PathVariable(name = "id") Integer idConversacion) {
 
-    //     Map<String, Object> responseAsMap = new HashMap<>();
-    //     ResponseEntity<Map<String, Object>> responseEntity = null;
+    // Map<String, Object> responseAsMap = new HashMap<>();
+    // ResponseEntity<Map<String, Object>> responseEntity = null;
 
-    //     // Comprobar si el producto ha llegado con errores, es decir si está mal formado
-    //     if (results.hasErrors()) {
+    // // Comprobar si el producto ha llegado con errores, es decir si está mal
+    // formado
+    // if (results.hasErrors()) {
 
-    //         List<String> mensajesError = new ArrayList<>();
+    // List<String> mensajesError = new ArrayList<>();
 
-    //         // Quiero recorrer los resultados de la validacion y extraer los mensajes por
-    //         // defecto
-    //         for (ObjectError objectError : results.getAllErrors()) {
-    //             mensajesError.add(objectError.getDefaultMessage());
-    //         }
-    //         String sucessMessage = "Le niveau et le langue ne peut mis à jour pas";
-    //         responseAsMap.put("Erreur: ", mensajesError);
-    //         responseAsMap.put("Conversation: ", conversacion);
-    //         responseAsMap.put("Niveau et langue", sucessMessage);
+    // // Quiero recorrer los resultados de la validacion y extraer los mensajes por
+    // // defecto
+    // for (ObjectError objectError : results.getAllErrors()) {
+    // mensajesError.add(objectError.getDefaultMessage());
+    // }
+    // String sucessMessage = "Le niveau et le langue ne peut mis à jour pas";
+    // responseAsMap.put("Erreur: ", mensajesError);
+    // responseAsMap.put("Conversation: ", conversacion);
+    // responseAsMap.put("Niveau et langue", sucessMessage);
 
-    //         responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+    // responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
+    // HttpStatus.BAD_REQUEST);
 
-    //         return responseEntity;
-    //     }
-    //     try {
-    //         conversacion.setId(idConversacion);
-    //         Conversacion conversacionActualizada = conversacionService.save(conversacion);
-    //         String sucessMessage = "La conversation a été mis à jour correctement";
-    //         responseAsMap.put("Mensaje: ", sucessMessage);
-    //         responseAsMap.put("Conversation", conversacionActualizada);
-    //         responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
-    //     } catch (DataAccessException e) {
-    //         String errorMessage = "La conversation n'a pas pu être mis à jour et la causa la plus probable de l'erreur est: "
-    //                 + e.getMostSpecificCause();
+    // return responseEntity;
+    // }
+    // try {
+    // conversacion.setId(idConversacion);
+    // Conversacion conversacionActualizada =
+    // conversacionService.save(conversacion);
+    // String sucessMessage = "La conversation a été mis à jour correctement";
+    // responseAsMap.put("Mensaje: ", sucessMessage);
+    // responseAsMap.put("Conversation", conversacionActualizada);
+    // responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
+    // HttpStatus.OK);
+    // } catch (DataAccessException e) {
+    // String errorMessage = "La conversation n'a pas pu être mis à jour et la causa
+    // la plus probable de l'erreur est: "
+    // + e.getMostSpecificCause();
 
-    //         responseAsMap.put("Erreur: ", errorMessage);
+    // responseAsMap.put("Erreur: ", errorMessage);
 
-    //         responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
-    //     }
-    //     return responseEntity;
+    // responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
+    // HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
+    // return responseEntity;
     // }
 
     // Metodo para eliminar una conversacion cuyo id se recibe como parametro de la
@@ -239,7 +243,7 @@ public ResponseEntity<Conversacion> actualizarConversacion(
 
                 conversacionService.deleteConversacionById(idConversacion);
 
-              //  conversacionService.deleteConversacion(conversacion);
+                // conversacionService.deleteConversacion(conversacion);
 
                 responseAsMap.put("Message", "La conversation a été supprimée avec succès");
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
@@ -255,45 +259,44 @@ public ResponseEntity<Conversacion> actualizarConversacion(
 
     @PostMapping("/asistentes")
     @Transactional
-    public ResponseEntity<Map<String, Object>> addAsistenteAConver (@Valid 
-    @RequestPart(name = "asistente") Asistente asistente,
-    @RequestParam(name = "idConversacion") Integer idConversacion,
-    @RequestPart(name = "file") MultipartFile file) throws IOException{
-
+    public ResponseEntity<Map<String, Object>> addAsistenteAConver(
+            @Valid @RequestPart(name = "asistente") Asistente asistente,
+            @RequestParam(name = "idConversacion") Integer idConversacion,
+            @RequestPart(name = "file") MultipartFile file) throws IOException {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
-        Map<String, Object> responseAsMap = new HashMap<>(); 
+        Map<String, Object> responseAsMap = new HashMap<>();
 
-        if(!file.isEmpty()) {
-        
-        String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
-        asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
+        if (!file.isEmpty()) {
 
-        // Devolver informacion respecto al file recibido
-        FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
-                .fileName(fileCode + "-" + file.getOriginalFilename())
-                .downloadURI("/asistentes/downloadFile/"
-                        + fileCode + "-" + file.getOriginalFilename())
-                .size(file.getSize())
-                .build();
+            String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
+            asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
 
-        responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
-    }
+            // Devolver informacion respecto al file recibido
+            FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
+                    .fileName(fileCode + "-" + file.getOriginalFilename())
+                    .downloadURI("/asistentes/downloadFile/"
+                            + fileCode + "-" + file.getOriginalFilename())
+                    .size(file.getSize())
+                    .build();
+
+            responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
+        }
 
         Conversacion conversacion = conversacionService.findById(idConversacion);
-        
-        if(conversacion.getAsistentes().size() <= 8){
+
+        if (conversacion.getAsistentes().size() <= 8) {
             conversacion.getAsistentes().add(asistente);
             responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
-        }else{
+        } else {
 
-        String errorMessage = "Le liste d'assistentes est complet";
+            String errorMessage = "Le liste d'assistentes est complet";
             responseAsMap.put("Erreur: ", errorMessage);
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);  
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
         }
 
-        return responseEntity; 
+        return responseEntity;
 
     }
 }

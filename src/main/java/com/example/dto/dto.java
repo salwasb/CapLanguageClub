@@ -2,6 +2,9 @@ package com.example.dto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.example.entities.Idioma;
+import com.example.entities.Nivel;
+
 public class dto {
     
     private String titulo;
@@ -9,6 +12,8 @@ public class dto {
     private int numeroAsistentes;
     private LocalDate fecha;
     private LocalTime hora;
+    private Nivel nivel;
+    private Idioma idioma;
 
     public String getTitulo() {
         return titulo;
@@ -39,6 +44,18 @@ public class dto {
     }
     public void setHora(LocalTime hora) {
         this.hora = hora;
+    }
+    public Nivel getNivel() {
+        return nivel;
+    }
+    public void setNivel(Nivel nivel) {
+        this.nivel = nivel;
+    }
+    public Idioma getIdioma() {
+        return idioma;
+    }
+    public void setIdioma(Idioma idioma) {
+        this.idioma = idioma;
     }
 
 

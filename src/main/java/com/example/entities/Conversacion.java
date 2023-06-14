@@ -65,11 +65,9 @@ public class Conversacion implements Serializable {
     private Modo modo;
 
     @Enumerated(EnumType.STRING)
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Idioma idioma;
 
     @Enumerated(EnumType.STRING)
-   // @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Nivel nivel;
 
     @ManyToMany(fetch = FetchType.LAZY)
