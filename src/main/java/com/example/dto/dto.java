@@ -4,6 +4,10 @@ import java.time.LocalTime;
 
 import com.example.entities.Idioma;
 import com.example.entities.Nivel;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 public class dto {
     
@@ -45,19 +49,23 @@ public class dto {
     public void setHora(LocalTime hora) {
         this.hora = hora;
     }
-    public Nivel getNivel() {
-        return nivel;
-    }
     public void setNivel(Nivel nivel) {
         this.nivel = nivel;
-    }
-    public Idioma getIdioma() {
-        return idioma;
     }
     public void setIdioma(Idioma idioma) {
         this.idioma = idioma;
     }
+@Enumerated(EnumType.STRING)
+    @JsonProperty("idioma")
+    public Idioma getIdioma() {
+        return idioma;
+    }
 
+    @Enumerated(EnumType.STRING)
+    @JsonProperty("nivel")
+    public Nivel getNivel() {
+        return nivel;
+    }
 
 
     

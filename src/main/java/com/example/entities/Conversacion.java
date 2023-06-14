@@ -6,11 +6,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -34,7 +29,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @Table(name = "conversaciones")
-@JsonIgnoreProperties(value = {"nivel","idioma"}, allowGetters = true)
+
 public class Conversacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,6 +60,7 @@ public class Conversacion implements Serializable {
     private Modo modo;
 
     @Enumerated(EnumType.STRING)
+
     private Idioma idioma;
 
     @Enumerated(EnumType.STRING)
@@ -74,15 +70,5 @@ public class Conversacion implements Serializable {
     @JsonBackReference
     private List<Asistente> asistentes;
 
-    @Enumerated(EnumType.STRING)
-    @JsonProperty("idioma")
-    public Idioma getIdioma() {
-        return idioma;
-    }
-
-    @Enumerated(EnumType.STRING)
-    @JsonProperty("nivel")
-    public Nivel getNivel() {
-        return nivel;
-    }
+    
 }

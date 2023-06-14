@@ -1,6 +1,7 @@
 package com.example.controllers;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -173,6 +174,8 @@ public class ConversacionController {
 
         return ResponseEntity.ok(conversacionActualizada);
     }
+
+    // @PutMapping("/conversation/{id}")
     // public ResponseEntity<Map<String, Object>> updateConversation(@Valid
     // @RequestBody Conversacion conversacion,
     // BindingResult results,
@@ -182,7 +185,7 @@ public class ConversacionController {
     // ResponseEntity<Map<String, Object>> responseEntity = null;
 
     // // Comprobar si el producto ha llegado con errores, es decir si está mal
-    // formado
+
     // if (results.hasErrors()) {
 
     // List<String> mensajesError = new ArrayList<>();
@@ -237,9 +240,9 @@ public class ConversacionController {
         try {
             if (idConversacion != null) {
 
-                // conversacion.getAsistentes().clear();
+                conversacion.getAsistentes().clear();
 
-                conversacionService.deleteAsistenteByIdConversacion(idConversacion);
+                // conversacionService.deleteAsistenteByIdConversacion(idConversacion);
 
                 conversacionService.deleteConversacionById(idConversacion);
 
@@ -257,16 +260,16 @@ public class ConversacionController {
         return responseEntity;
     }
 
-    @PostMapping("/asistentes")
+    @PostMapping("/addAsistentes")
     @Transactional
     public ResponseEntity<Map<String, Object>> addAsistenteAConver(
-            @Valid @RequestPart(name = "asistente") Asistente asistente,
+            @Valid @RequestParam(name = "idAsistente") Integer idAsistente,
             @RequestParam(name = "idConversacion") Integer idConversacion,
             @RequestPart(name = "file") MultipartFile file) throws IOException {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
         Map<String, Object> responseAsMap = new HashMap<>();
-
+        Asistente asistente = asistenteService.findById(idAsistente);
         if (!file.isEmpty()) {
 
             String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
@@ -284,19 +287,59 @@ public class ConversacionController {
         }
 
         Conversacion conversacion = conversacionService.findById(idConversacion);
+        LocalDate diaConversacion = conversacion.getFecha();
+        if (asistente.getConversacion() != null && asistente.getConversacion().size() != 0) {
 
-        if (conversacion.getAsistentes().size() <= 8) {
-            conversacion.getAsistentes().add(asistente);
-            responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
+            List<Integer> diasDistintos = asistente.getConversacion().stream()
+                    .filter(c -> !c.getFecha().equals(diaConversacion))
+                    .map(c -> c.getFecha().getDayOfMonth()).toList();
+            if (diasDistintos != null && diasDistintos.size() != 0) {
+                if (conversacion.getAsistentes().size() <= 8) {
+
+                    conversacion.getAsistentes().add(asistenteService.findById(idAsistente));
+
+                    List<Conversacion> listaDeConversacion = new ArrayList<>();
+                    listaDeConversacion.add(conversacion);
+                    asistente.setConversacion(listaDeConversacion);
+
+                    List<Asistente> asistentePersistido = conversacion.getAsistentes();
+                    conversacion.setNumeroAsistentes(conversacion.getAsistentes().size());
+                    responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
+                    responseAsMap.put("Asistentes", asistentePersistido);
+                    responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
+                } else {
+
+                    String errorMessage = "Le liste d'assistentes est complet";
+                    responseAsMap.put("Erreur: ", errorMessage);
+                    responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+                }
+            } else {
+
+                String errorMessage = "Ya estás en una conversacion ese día";
+                responseAsMap.put("Erreur: ", errorMessage);
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+            }
+
         } else {
+            if (conversacion.getAsistentes().size() <= 8) {
+                conversacion.getAsistentes().add(asistenteService.findById(idAsistente));
 
-            String errorMessage = "Le liste d'assistentes est complet";
-            responseAsMap.put("Erreur: ", errorMessage);
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+                List<Conversacion> listaDeConversacion = new ArrayList<>();
+                listaDeConversacion.add(conversacion);
+                asistente.setConversacion(listaDeConversacion);
+
+                List<Asistente> asistentePersistido = conversacion.getAsistentes();
+                conversacion.setNumeroAsistentes(conversacion.getAsistentes().size());
+                responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
+                responseAsMap.put("Asistentes", asistentePersistido);
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
+            } else {
+
+                String errorMessage = "La liste d'assistentes est complet";
+                responseAsMap.put("Erreur: ", errorMessage);
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+            }
         }
-
         return responseEntity;
-
     }
 }
