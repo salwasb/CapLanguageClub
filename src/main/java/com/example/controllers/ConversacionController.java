@@ -1,6 +1,7 @@
 package com.example.controllers;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -256,19 +257,16 @@ public class ConversacionController {
 
         responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
     }
+    
+   
+    Conversacion conversacion = conversacionService.findById(idConversacion);
+   LocalDate diaConversacion =  conversacion.getFecha();
+   if(asistente.getConversacion() != null){
 
-    
-        Conversacion conversacion = conversacionService.findById(idConversacion);
-         
-        List<Integer> ids = asistente.getConversacion().stream().map(Conversacion :: getId).toList();
-        
-        while (ids != null){
-        int dias = conversacion.getFecha().getDayOfMonth();
-       
-        List <Integer> diasDistintos = asistente.getConversacion().stream()
-        .filter(c -> !c.getFecha().equals(dias))
-        .map(c -> c.getFecha().getDayOfMonth()).toList();
-    
+   List<Integer> diasDistintos = asistente.getConversacion().stream()
+   .filter(c -> !c.getFecha().equals(diaConversacion))
+   .map(c -> c.getFecha().getDayOfMonth()).toList();
+
 
         if(conversacion.getAsistentes().size() <= 8 && diasDistintos != null){
             conversacion.getAsistentes().add(asistenteService.findById(idAsistente));
@@ -281,7 +279,19 @@ public class ConversacionController {
             responseAsMap.put("Erreur: ", errorMessage);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);  
         }
-    }
+   }else{
+     if(conversacion.getAsistentes().size() <= 8){
+            conversacion.getAsistentes().add(asistenteService.findById(idAsistente));
+            conversacion.setNumeroAsistentes(conversacion.getAsistentes().size());
+            responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
+        }else{
+
+        String errorMessage = "Le liste d'assistentes est complet";
+            responseAsMap.put("Erreur: ", errorMessage);
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);  
+        }
+   }
         
         return responseEntity; 
 
