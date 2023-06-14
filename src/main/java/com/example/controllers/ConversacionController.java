@@ -230,17 +230,17 @@ public class ConversacionController {
         return responseEntity;
     }
 
-    @PostMapping("/asistentes")
+    @PostMapping("/addAsistentes")
     @Transactional
     public ResponseEntity<Map<String, Object>> addAsistenteAConver (@Valid 
-    @RequestPart(name = "asistente") Asistente asistente,
+    @RequestParam(name = "idAsistente") Integer idAsistente,
     @RequestParam(name = "idConversacion") Integer idConversacion,
     @RequestPart(name = "file") MultipartFile file) throws IOException{
 
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
         Map<String, Object> responseAsMap = new HashMap<>(); 
-
+        Asistente asistente = asistenteService.findById(idAsistente); 
         if(!file.isEmpty()) {
         
         String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
@@ -259,9 +259,20 @@ public class ConversacionController {
 
     
         Conversacion conversacion = conversacionService.findById(idConversacion);
+         
+        List<Integer> ids = asistente.getConversacion().stream().map(Conversacion :: getId).toList();
         
-        if(conversacion.getAsistentes().size() <= 8){
-            conversacion.getAsistentes().add(asistente);
+        while (ids != null){
+        int dias = conversacion.getFecha().getDayOfMonth();
+       
+        List <Integer> diasDistintos = asistente.getConversacion().stream()
+        .filter(c -> !c.getFecha().equals(dias))
+        .map(c -> c.getFecha().getDayOfMonth()).toList();
+    
+
+        if(conversacion.getAsistentes().size() <= 8 && diasDistintos != null){
+            conversacion.getAsistentes().add(asistenteService.findById(idAsistente));
+            conversacion.setNumeroAsistentes(conversacion.getAsistentes().size());
             responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
         }else{
@@ -270,8 +281,8 @@ public class ConversacionController {
             responseAsMap.put("Erreur: ", errorMessage);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);  
         }
+    }
         
-
         return responseEntity; 
 
     }

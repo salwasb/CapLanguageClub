@@ -62,7 +62,7 @@ public class LoadDataBase {
                         Conversacion conversacion2 = Conversacion.builder()
                                         .id(2)
                                         .titulo("anglais")
-                                        .fecha(LocalDate.of(2023, Month.DECEMBER, 10))
+                                        .fecha(LocalDate.of(2023, Month.DECEMBER, 20))
                                         .hora(LocalTime.of(20, 15, 00))
                                         .modo(Modo.PRESENCIAL)
                                         .lugar("Planta 2")
