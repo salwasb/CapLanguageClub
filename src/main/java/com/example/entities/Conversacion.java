@@ -5,12 +5,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,15 +16,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -61,11 +55,11 @@ public class Conversacion implements Serializable {
     @Max(value = 8, message = "Le nombre d'assistants ne peut pas etre superieur a huit")
     private int numeroAsistentes;
 
-    @Future
+    // @Future
     @NotNull(message = "La date ne peut pas être nul")
     private LocalDate fecha;
 
-    @Future
+    // @Future
     @NotNull(message = "L'heure ne peut pas être nul")
     private LocalTime hora;
 
@@ -81,14 +75,17 @@ public class Conversacion implements Serializable {
     // private String inmutable;
 
     // private void Nivel (String inmutable){
-    //     this.inmutable=inmutable;
+    // this.inmutable=inmutable;
     // }
     // public String getInmutable(){
-    //     return inmutable;
+    // return inmutable;
     // }
     // public void setInmutable(String inmutable){
-    //     this.inmutable= inmutable;
+    // this.inmutable= inmutable;
     // }
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY)
+
+    @JsonBackReference
     private List<Asistente> asistentes;
+
 }

@@ -9,8 +9,19 @@ import com.example.entities.Conversacion;
 public interface ConversacionDao extends JpaRepository<Conversacion, Integer> {
 
      @Modifying
-     @Query(value = "delete from Asistente a where a.id = :idAsistente")
+     @Query(value = "delete from asistentes_conversacion where asistente_id = ?1", nativeQuery = true)
      public void deleteAsistenteByIdConversacion(int idAsistente);
+
+     @Modifying
+     @Query(value = "DELETE FROM asistentes_conversacion \n" + //
+               "WHERE\n" + //
+               "    conversacion_id = ?1", nativeQuery = true)
+     public void deleteConversacionById(int id);
+
+     
+   
+
+ 
     
     
 }

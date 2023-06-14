@@ -29,6 +29,10 @@ public class LoadDataBase {
         private List<Conversacion> conversacionesAsistente2 = new ArrayList<>();
         private List<Conversacion> conversacionesAsistente3 = new ArrayList<>();
 
+        private List<Asistente> asistenteconversaciones1 = new ArrayList<>();
+        private List<Asistente> asistenteconversaciones2 = new ArrayList<>();
+        private List<Asistente> asistenteconversaciones3 = new ArrayList<>();
+
         @Bean
         public CommandLineRunner sampleData(ConversacionService conversacionService,
                         AsistenteService asistentesService, UserService userService) {
@@ -52,6 +56,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.FRANCES)
                                         .nivel(Nivel.A)
+                                        .asistentes(asistenteconversaciones1)
                                         .numeroAsistentes(4)
                                         .build();
 
@@ -64,6 +69,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.INGLES)
                                         .nivel(Nivel.SINNIVEL)
+                                        .asistentes(asistenteconversaciones1)
                                         .numeroAsistentes(4)
                                         .build();
 
@@ -76,6 +82,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.INGLES)
                                         .nivel(Nivel.SINNIVEL)
+                                        .asistentes(asistenteconversaciones1)
                                         .numeroAsistentes(4)
                                         .build();
 
@@ -88,6 +95,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.FRANCES)
                                         .nivel(Nivel.C)
+                                        .asistentes(asistenteconversaciones1)
                                         .numeroAsistentes(3)
                                         .build();
 
@@ -100,6 +108,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.INGLES)
                                         .nivel(Nivel.NATIVO)
+                                        .asistentes(asistenteconversaciones1)
                                         .numeroAsistentes(2)
                                         .build();
 
@@ -107,7 +116,6 @@ public class LoadDataBase {
                         conversacionesAsistente1.add(conversacion2);
                         conversacionesAsistente1.add(conversacion3);
                         conversacionesAsistente2.add(conversacion5);
-                        conversacionesAsistente3.add(conversacion5);
                         conversacionesAsistente3.add(conversacion4);
 
                         conversacionService.save(conversacion1);
@@ -116,8 +124,8 @@ public class LoadDataBase {
                         conversacionService.save(conversacion4);
                         conversacionService.save(conversacion5);
 
-                        asistentesService.saveAsistente(
-                                        Asistente.builder()
+                       
+                         Asistente asistente1 = Asistente.builder()
                                                         .id(1)
                                                         .nombre("Nawal")
                                                         .apellidos("AAA")
@@ -125,19 +133,18 @@ public class LoadDataBase {
                                                         .correo("jgjfj@cap.com")
                                                         .idioma(Idioma.FRANCES)
                                                         .conversacion(conversacionesAsistente1)
-                                                        .build());
-
-                        asistentesService.saveAsistente(
-                                        Asistente.builder()
+                                                        .build();
+                        
+                         Asistente asistente2 =  Asistente.builder()
                                                         .id(2)
                                                         .nombre("Mimi")
                                                         .apellidos("BBB")
                                                         .correo("kffkk@cap.com")
                                                         .idioma(Idioma.INGLES)
                                                         .conversacion(conversacionesAsistente2)
-                                                        .build());
+                                                        .build();
 
-                        asistentesService.saveAsistente(
+                         Asistente asistente3 = asistentesService.saveAsistente(
                                         Asistente.builder()
                                                         .id(3)
                                                         .nombre("Richi")
@@ -212,6 +219,12 @@ public class LoadDataBase {
                                                         .idioma(Idioma.FRANCES)
                                                         .conversacion(conversacionesAsistente3)
                                                         .build());
+
+                asistenteconversaciones1.add(asistente1);
+                asistenteconversaciones1.add(asistente3);
+                asistenteconversaciones1.add(asistente2);
+
                 };
+               
         }
 }

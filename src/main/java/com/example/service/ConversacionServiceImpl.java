@@ -46,6 +46,15 @@ public class ConversacionServiceImpl implements ConversacionService{
        conversacionDao.deleteAsistenteByIdConversacion(idConversacion);
     }
 
+    @Override
+    @Transactional
+    public void deleteConversacionById(int id) {
+        conversacionDao.deleteConversacionById(id);
+    }
+
+    
+
+
 
     
 }

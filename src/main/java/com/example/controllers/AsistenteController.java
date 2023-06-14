@@ -1,11 +1,18 @@
 package com.example.controllers;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.MonthDay;
+import java.time.Period;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -36,11 +43,14 @@ import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
 import com.example.model.FileUploadResponse;
 import com.example.service.AsistenteService;
+import com.example.service.ConversacionService;
 import com.example.utilities.FileDownloadUtil;
 import com.example.utilities.FileUploadUtil;
+import com.fasterxml.jackson.datatype.jsr310.deser.MonthDayDeserializer;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/asistentes")
 public class AsistenteController {
@@ -51,6 +61,8 @@ public class AsistenteController {
     private FileUploadUtil fileUploadUtil;
     @Autowired
     private FileDownloadUtil fileDownloadUtil;
+    @Autowired
+    private ConversacionService conversacionService;
 
     // Metodo por el cual se obtienen TODOS los asistentes, con paginación
 
@@ -83,35 +95,20 @@ public class AsistenteController {
                 asistentes = asistenteService.findAll(sortByLastName);
                 responseEntity = new ResponseEntity<List<Asistente>>(asistentes, HttpStatus.OK);
 
-            //  ResponseEntity<List<Conversacion>> responseEntity2;
-            //   Map<String, List<Conversacion>> responseAsMap = new HashMap<>();
-            //         Asistente asistente = new Asistente();
-        
-            // List<Conversacion> conversaciones = asistente.getConversacion(); 
-            // responseEntity2 = new ResponseEntity<List<Conversacion>>(conversaciones, HttpStatus.OK);
+                ResponseEntity<List<Conversacion>> responseEntity2;
+                Asistente asistente = new Asistente();
 
-            // responseAsMap.put("Informations sur les conversations: ", conversaciones);
-
-            //  List<Conversacion> conversaciones = new ArrayList<>();
-            //     Map<String, List<Conversacion>> responseAsMap = new HashMap<>();
-
-                
-            //     //Conversacion conversaciones= null;
-            //    for(Conversacion conversaciones : asistente.getConversacion()){
-            //     conversaciones.getTitulo();
-            //     conversaciones.getIdioma();
-            //   }
-
-                //responseAsMap.put("Informations sur les conversations: ", conversaciones);
+                List<Conversacion> conversaciones = asistente.getConversacion();
+                responseEntity2 = new ResponseEntity<List<Conversacion>>(conversaciones, HttpStatus.OK);
 
             } catch (Exception e) {
                 responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
         }
-    
+
         return responseEntity;
     }
-            
+
     // Metodo por el cual se obtienen TODOS los asistentes, SIN paginación
     // @GetMapping
     // public ResponseEntity<List<Asistente>> findAll() {
@@ -174,8 +171,6 @@ public class AsistenteController {
         // formado
         if (results.hasErrors()) {
 
-           // while(asistente.getConversacion().getFecha() != asistente.getConversacion().getFecha()){
-
             List<String> mensajesError = new ArrayList<>();
 
             // quiero recorrer los resultados de la validacion y extraer los mensajes por
@@ -191,55 +186,52 @@ public class AsistenteController {
 
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
-            int idAsistente = asistente.getId();
-            while (asistente != null){
-            asistente.increment();
-
-                // asistente.getConversacion().stream()
-                // .mapToInt(Conversacion::getNumeroAsistentes)
-                // .equals(asistente.getCount());
-
-            // Conversacion conversacion = asistente.getConversacion().get(idAsistente);
-            // conversacion.setNumeroAsistentes(asistente.getCount());
-            }
             return responseEntity;
-        // }
         }
 
-    // Si no hay errores, entonces persistimos el asistente,
-    // comprobando previamente si nos han enviado una imagen
-    // , o un archivo.
-    if(!file.isEmpty()) {
+        List<Integer> ids = asistente.getConversacion().stream().map(Conversacion :: getId).toList();
         
-        String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
-        asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
+        for (int id : ids){
+        Conversacion conversacion = conversacionService.findById(id);
+        int dias = conversacion.getFecha().getDayOfMonth();
+       
+        List <Integer> diasComp = asistente.getConversacion().stream()
+        .filter(c -> !c.getFecha().equals(dias))
+        .map(c -> c.getFecha().getDayOfMonth()).toList();
 
-        // Devolver informacion respecto al file recibido
-        FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
-                .fileName(fileCode + "-" + file.getOriginalFilename())
-                .downloadURI("/asistentes/downloadFile/"
-                        + fileCode + "-" + file.getOriginalFilename())
-                .size(file.getSize())
-                .build();
-
-        responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
     }
+        // Si no hay errores, entonces persistimos el asistente,
+        // comprobando previamente si nos han enviado una imagen
+        // , o un archivo.
+        if (!file.isEmpty()) {
 
-    try
-    {
-        Asistente asistentePersistido = asistenteService.saveAsistente(asistente);
-        String successMessage = "L'assistant a été mis à jour correctement";
-        responseAsMap.put("Mensage: ", successMessage);
-        responseAsMap.put("Asistant:", asistentePersistido);
-        responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
-    }catch(
-    DataAccessException e)
-    {
-        String errorMessage = "L'assistant n'a pas pu être conservé et la cause la plus probable de l'erreur est: "
-                + e.getMostSpecificCause();
-        responseAsMap.put("Erreur", errorMessage);
-        responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
-    }return responseEntity;
+            String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
+            asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
+
+            // Devolver informacion respecto al file recibido
+            FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
+                    .fileName(fileCode + "-" + file.getOriginalFilename())
+                    .downloadURI("/asistentes/downloadFile/"
+                            + fileCode + "-" + file.getOriginalFilename())
+                    .size(file.getSize())
+                    .build();
+
+            responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
+        }
+
+        try {
+            Asistente asistentePersistido = asistenteService.saveAsistente(asistente);
+            String successMessage = "L'assistant a été mis à jour correctement";
+            responseAsMap.put("Mensage: ", successMessage);
+            responseAsMap.put("Asistant:", asistentePersistido);
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
+        } catch (DataAccessException e) {
+            String errorMessage = "L'assistant n'a pas pu être conservé et la cause la plus probable de l'erreur est: "
+                    + e.getMostSpecificCause();
+            responseAsMap.put("Erreur", errorMessage);
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return responseEntity;
     }
 
     // Metodo por el cual el administrador puede modificar un asistente, recibiendo
@@ -249,11 +241,10 @@ public class AsistenteController {
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<Map<String, Object>> updateAsistente(
-            @Valid 
-            @RequestPart(name = "asistente") Asistente asistente,
+            @Valid @RequestPart(name = "asistente") Asistente asistente,
             @PathVariable(name = "id") Integer idAsistente,
             BindingResult results,
-            @RequestPart(name = "file") MultipartFile file) throws IOException{
+            @RequestPart(name = "file") MultipartFile file) throws IOException {
 
         Map<String, Object> responseAsMap = new HashMap<>();
 
@@ -294,22 +285,22 @@ public class AsistenteController {
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
-         if(!file.isEmpty())
+        if (!file.isEmpty())
 
-    {
-        String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
-        asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
+        {
+            String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
+            asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
 
-        // Devolver informacion respecto al file recibido
-        FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
-                .fileName(fileCode + "-" + file.getOriginalFilename())
-                .downloadURI("/asistentes/downloadFile/"
-                        + fileCode + "-" + file.getOriginalFilename())
-                .size(file.getSize())
-                .build();
+            // Devolver informacion respecto al file recibido
+            FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
+                    .fileName(fileCode + "-" + file.getOriginalFilename())
+                    .downloadURI("/asistentes/downloadFile/"
+                            + fileCode + "-" + file.getOriginalFilename())
+                    .size(file.getSize())
+                    .build();
 
-        responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
-    }
+            responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
+        }
         return responseEntity;
     }
 
@@ -320,7 +311,6 @@ public class AsistenteController {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
         Map<String, Object> responseAsMap = new HashMap<>();
-        Asistente asistente =  asistenteService.findById(idAsistente);
 
         try {
             asistenteService.deleteAsistente(asistenteService.findById(idAsistente));
@@ -332,15 +322,7 @@ public class AsistenteController {
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
-          while (asistente == null){
-            asistente.decrement();
-            // asistente.getConversacion().stream()
-            //     .mapToInt(Conversacion::getNumeroAsistentes)
-            //     .
-            
-            // Conversacion conversacion = asistente.getConversacion().get(idAsistente);
-            // conversacion.setNumeroAsistentes(asistente.getCount());
-          }
+
         return responseEntity;
     }
 
@@ -363,9 +345,46 @@ public class AsistenteController {
         String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
 
         return ResponseEntity.ok()
-        .contentType(MediaType.parseMediaType(contentType))
-        .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
-        .body(resource);
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
+                .body(resource);
+    }
+    @GetMapping("/conversacion/{id}")
+    public ResponseEntity<Map<String, Object>> findConversacionesById(
+            @PathVariable(name = "id", required = true) Integer idAsistente) {
+
+        ResponseEntity<Map<String, Object>> responseEntity = null;
+        Map<String, Object> responseAsMap = new HashMap<>();
+
+        LocalDate hoy = LocalDate.now();
+        Period periodo = Period.ofYears(5);
+
+        LocalDate fechaFutura = hoy.plus(periodo);
+        try {
+            List<Conversacion> conversaciones = asistenteService.findConversacionById(idAsistente);
+            
+            List<Conversacion> conv = conversaciones.stream()
+            .filter(c -> c.getFecha().equals(fechaFutura))
+            .collect(Collectors.toList());
+
+            if (conv != null) {
+                String successMessage = "Les conversations avec ID du Asistant: " + idAsistente + " a été trouvée.";
+                responseAsMap.put("Message", successMessage);
+                responseAsMap.put("Conversations", conversaciones);
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
+
+            } else {
+                String notFoundMessage = "Les conversations avec ID du Asistant:  " + idAsistente + " n'a pas pu être trouvée.";
+                responseAsMap.put("Message", notFoundMessage);
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.NOT_FOUND);
+            }
+        } catch (DataAccessException e) {
+            String errorMessage = "Erreur grave, et la causa la plus probable de l'erreur est: "
+                    + e.getMostSpecificCause();
+            responseAsMap.put("Erreur Grave", errorMessage);
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return responseEntity;
     }
 
 }

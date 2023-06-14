@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.example.entities.Asistente;
+import com.example.entities.Conversacion;
 public interface AsistenteService {
 
     public List<Asistente> findAll(Sort sort);
@@ -17,4 +18,5 @@ public interface AsistenteService {
     public void deleteAsistente (Asistente asistente);
     public Asistente updateAsistente (Asistente asistente);
     public void deleteAsistenteById (int idAsistente);
+    public List<Conversacion> findConversacionById(int id);
 }

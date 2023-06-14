@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.dao.AsistenteDao;
 import com.example.entities.Asistente;
+import com.example.entities.Conversacion;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +63,11 @@ public class AsistenteServiceImpl implements AsistenteService {
     @Transactional
     public void deleteAsistenteById(int idAsistente) {
       asistenteDao.deleteById(idAsistente);
+    }
+
+    @Override
+    public List<Conversacion> findConversacionById(int id) {
+      return asistenteDao.findConversacionById(id);
     }
 
   

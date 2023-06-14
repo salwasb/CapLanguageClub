@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
 import com.example.service.AsistenteService;
 import com.example.service.ConversacionService;
@@ -48,6 +50,13 @@ public class ConversacionController {
         try {
             conversaciones = conversacionService.findAll();
             responseEntity = new ResponseEntity<>(Collections.singletonList(conversaciones), HttpStatus.OK);
+
+             ResponseEntity<List<Asistente>> responseEntity2;
+                   Conversacion conversacion = new Conversacion();
+        
+            List<Asistente> asistentes = conversacion.getAsistentes(); 
+            responseEntity2 = new ResponseEntity<List<Asistente>>(asistentes, HttpStatus.OK);
+
         } catch (Exception e) {
             responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -133,7 +142,8 @@ public class ConversacionController {
     // Metodo que actualiza una conversacion dado el id de la misma
     // Es basicamente igual al de persistir una conversacion nueva
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updateConversation(@Valid @RequestBody Conversacion conversacion,
+    public ResponseEntity<Map<String, Object>> updateConversation(@Valid
+     @RequestBody Conversacion conversacion,
             BindingResult results,
             @PathVariable(name = "id") Integer idConversacion) {
         Map<String, Object> responseAsMap = new HashMap<>();
@@ -186,12 +196,17 @@ public class ConversacionController {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
         Map<String, Object> responseAsMap = new HashMap<>();
+        Conversacion conversacion = conversacionService.findById(idConversacion);
 
         try {
         if (idConversacion != null) {
 
-            conversacionService.deleteAsistenteByIdConversacion(idConversacion);
-            conversacionService.delete(idConversacion);
+            // conversacion.getAsistentes().clear();
+            
+           conversacionService.deleteAsistenteByIdConversacion(idConversacion);
+           
+        //    conversacionService.deleteConversacion(conversacion);
+        conversacionService.deleteConversacionById(idConversacion);
 
             responseAsMap.put("Message", "La conversation a été supprimée avec succès");
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
@@ -204,5 +219,4 @@ public class ConversacionController {
         }
         return responseEntity;
     }
-
 }
