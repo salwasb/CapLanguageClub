@@ -30,17 +30,16 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "asistentes")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Asistente implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
+
     @NotNull(message = "Le prenom ne peut pas être nul")
     @NotBlank(message = "Le prenom ne peut pas être vide")
     private String nombre;
@@ -51,27 +50,28 @@ public class Asistente implements Serializable {
 
     private String imagenAsistente;
 
-
     @NotNull(message = "L'email ne peut pas être nul")
     @Pattern(regexp = "(?i)^[A-Z0-9._%+-]+@cap\\.com$", message = "L'e-mail doit avoir le domaine @cap.com")
     // @email(regexp = /^[a-zA-Z0-9._%+-]{2,6}@(cap)\.com$/)
     private String correo;
-    
+
     @Enumerated(EnumType.STRING)
     @NotNull(message = "La langue ne peut pas être nul")
-     private Idioma idioma; 
+    private Idioma idioma;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "asistentes")
- 
+    @ManyToMany(fetch = FetchType.LAZY)
     // @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private List<Conversacion> conversacion;
 
     @JsonIgnore
-    int count = 2;
-    public void increment(){
-    count++;
+    @Builder.Default
+    int count = 0;
+
+    public void increment() {
+        count++;
     }
-    public void decrement(){
-    count--;
+
+    public void decrement() {
+        count--;
     }
 }

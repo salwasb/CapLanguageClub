@@ -167,6 +167,7 @@ public class AsistenteController {
             @Valid @RequestPart(name = "asistente") Asistente asistente,
             BindingResult results,
             @RequestPart(name = "file") MultipartFile file) throws IOException {
+
         Map<String, Object> responseAsMap = new HashMap<>();
         ResponseEntity<Map<String, Object>> responseEntity = null;
 
@@ -199,12 +200,14 @@ public class AsistenteController {
                 // .mapToInt(Conversacion::getNumeroAsistentes)
                 // .equals(asistente.getCount());
 
-            // Conversacion conversacion = asistente.getConversacion().get(idAsistente);
-            // conversacion.setNumeroAsistentes(asistente.getCount());
+            Conversacion conversacion = asistente.getConversacion().get(idAsistente);
+            conversacion.setNumeroAsistentes(asistente.getCount());
             }
             return responseEntity;
         // }
         }
+
+
 
     // Si no hay errores, entonces persistimos el asistente,
     // comprobando previamente si nos han enviado una imagen
@@ -332,15 +335,7 @@ public class AsistenteController {
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
-          while (asistente == null){
-            asistente.decrement();
-            // asistente.getConversacion().stream()
-            //     .mapToInt(Conversacion::getNumeroAsistentes)
-            //     .
-            
-            // Conversacion conversacion = asistente.getConversacion().get(idAsistente);
-            // conversacion.setNumeroAsistentes(asistente.getCount());
-          }
+
         return responseEntity;
     }
 

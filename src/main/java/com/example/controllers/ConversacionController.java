@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
 import com.example.service.AsistenteService;
 import com.example.service.ConversacionService;
@@ -55,7 +57,7 @@ public class ConversacionController {
     }
 
     // Metodo que persiste una conversacion en la base de datos
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<Map<String, Object>> saveConversation(@Valid @RequestBody Conversacion conversacion,
             BindingResult results) {
 
@@ -205,4 +207,25 @@ public class ConversacionController {
         return responseEntity;
     }
 
+    @PostMapping("/asistentes")
+    public ResponseEntity<Map<String, Object>> addAsistenteAConver (@Valid 
+    @RequestParam(name = "asistente") Asistente asistente,
+    @RequestParam(name = "id") Integer idConversacion){
+        ResponseEntity<Map<String, Object>> responseEntity = null;
+        Map<String, Object> responseAsMap = new HashMap<>(); 
+
+        Conversacion conversacion = conversacionService.findById(idConversacion);
+        if(conversacion.getAsistentes().size() < 8){
+            conversacion.getAsistentes().add(asistente);
+        }else{
+
+        String errorMessage = "Le liste d'assistentes est complet";
+            responseAsMap.put("Erreur: ", errorMessage);
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);  
+        }
+        
+
+        return responseEntity; 
+
+    }
 }

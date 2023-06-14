@@ -57,8 +57,8 @@ public class Conversacion implements Serializable {
     private String lugar;
 
     @NotNull(message = "Le nombre d'assistants ne peut pas être null")
-    @Min(value = 2, message = "Le nombre d'assistants ne peut pas etre inferieur a deux")
-    @Max(value = 8, message = "Le nombre d'assistants ne peut pas etre superieur a huit")
+    // @Min(value = 2, message = "Le nombre d'assistants ne peut pas etre inferieur a deux")
+    // @Max(value = 8, message = "Le nombre d'assistants ne peut pas etre superieur a huit")
     private int numeroAsistentes;
 
     @Future
