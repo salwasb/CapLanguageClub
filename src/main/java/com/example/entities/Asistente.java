@@ -4,10 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,8 +13,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,6 +26,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "asistentes")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Asistente implements Serializable {
 
@@ -63,15 +59,5 @@ public class Asistente implements Serializable {
     // @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private List<Conversacion> conversacion;
 
-    @JsonIgnore
-    @Builder.Default
-    int count = 0;
 
-    public void increment() {
-        count++;
-    }
-
-    public void decrement() {
-        count--;
-    }
 }

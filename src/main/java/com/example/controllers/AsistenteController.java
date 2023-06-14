@@ -192,22 +192,9 @@ public class AsistenteController {
 
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
-            int idAsistente = asistente.getId();
-            while (asistente != null){
-            asistente.increment();
-
-                // asistente.getConversacion().stream()
-                // .mapToInt(Conversacion::getNumeroAsistentes)
-                // .equals(asistente.getCount());
-
-            Conversacion conversacion = asistente.getConversacion().get(idAsistente);
-            conversacion.setNumeroAsistentes(asistente.getCount());
-            }
             return responseEntity;
         // }
         }
-
-
 
     // Si no hay errores, entonces persistimos el asistente,
     // comprobando previamente si nos han enviado una imagen
@@ -228,15 +215,13 @@ public class AsistenteController {
         responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
     }
 
-    try
-    {
+    try{
         Asistente asistentePersistido = asistenteService.saveAsistente(asistente);
         String successMessage = "L'assistant a été mis à jour correctement";
         responseAsMap.put("Mensage: ", successMessage);
         responseAsMap.put("Asistant:", asistentePersistido);
         responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
-    }catch(
-    DataAccessException e)
+    }catch(DataAccessException e)
     {
         String errorMessage = "L'assistant n'a pas pu être conservé et la cause la plus probable de l'erreur est: "
                 + e.getMostSpecificCause();

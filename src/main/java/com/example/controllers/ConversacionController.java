@@ -1,5 +1,6 @@
 package com.example.controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,13 +21,19 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
+import com.example.model.FileUploadResponse;
 import com.example.service.AsistenteService;
 import com.example.service.ConversacionService;
+import com.example.utilities.FileDownloadUtil;
+import com.example.utilities.FileUploadUtil;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @RestController
@@ -38,6 +45,9 @@ public class ConversacionController {
 
     @Autowired
     AsistenteService asistenteService;
+
+    @Autowired
+    private FileUploadUtil fileUploadUtil;
 
     @GetMapping
     public ResponseEntity<List<List<Conversacion>>> findAll() {
@@ -208,15 +218,39 @@ public class ConversacionController {
     }
 
     @PostMapping("/asistentes")
+    @Transactional
     public ResponseEntity<Map<String, Object>> addAsistenteAConver (@Valid 
-    @RequestParam(name = "asistente") Asistente asistente,
-    @RequestParam(name = "id") Integer idConversacion){
+    @RequestPart(name = "asistente") Asistente asistente,
+    @RequestParam(name = "id") Integer idConversacion,
+    @RequestPart(name = "file") MultipartFile file) throws IOException{
+
+
         ResponseEntity<Map<String, Object>> responseEntity = null;
         Map<String, Object> responseAsMap = new HashMap<>(); 
 
+        if(!file.isEmpty()) {
+        
+        String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
+        asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
+
+        // Devolver informacion respecto al file recibido
+        FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
+                .fileName(fileCode + "-" + file.getOriginalFilename())
+                .downloadURI("/asistentes/downloadFile/"
+                        + fileCode + "-" + file.getOriginalFilename())
+                .size(file.getSize())
+                .build();
+
+        responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
+    }
+
+    
         Conversacion conversacion = conversacionService.findById(idConversacion);
-        if(conversacion.getAsistentes().size() < 8){
+        
+        if(conversacion.getAsistentes().size() >= 8){
             conversacion.getAsistentes().add(asistente);
+            responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
         }else{
 
         String errorMessage = "Le liste d'assistentes est complet";
