@@ -29,9 +29,9 @@ public class LoadDataBase {
         private List<Conversacion> conversacionesAsistente2 = new ArrayList<>();
         private List<Conversacion> conversacionesAsistente3 = new ArrayList<>();
 
-        private List<Asistente> asistenteconversaciones1 = new ArrayList<>();
-        private List<Asistente> asistenteconversaciones2 = new ArrayList<>();
-        private List<Asistente> asistenteconversaciones3 = new ArrayList<>();
+        private List<Asistente> asistentesConversacion1 = new ArrayList<>();
+        private List<Asistente> asistentesConversacion2 = new ArrayList<>();
+
 
         @Bean
         public CommandLineRunner sampleData(ConversacionService conversacionService,
@@ -56,8 +56,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.FRANCES)
                                         .nivel(Nivel.A)
-                                        .asistentes(asistenteconversaciones1)
-                                        .numeroAsistentes(4)
+                                        .asistentes(asistentesConversacion1)
                                         .build();
 
                         Conversacion conversacion2 = Conversacion.builder()
@@ -69,8 +68,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.INGLES)
                                         .nivel(Nivel.SINNIVEL)
-                                        .asistentes(asistenteconversaciones1)
-                                        .numeroAsistentes(4)
+                                        .asistentes(asistentesConversacion1)
                                         .build();
 
                         Conversacion conversacion3 = Conversacion.builder()
@@ -82,8 +80,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.INGLES)
                                         .nivel(Nivel.SINNIVEL)
-                                        .asistentes(asistenteconversaciones1)
-                                        .numeroAsistentes(4)
+                                        .asistentes(asistentesConversacion2)
                                         .build();
 
                          Conversacion conversacion4 = Conversacion.builder()
@@ -95,8 +92,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.FRANCES)
                                         .nivel(Nivel.C)
-                                        .asistentes(asistenteconversaciones1)
-                                        .numeroAsistentes(3)
+                                        .asistentes(asistentesConversacion1)
                                         .build();
 
                         Conversacion conversacion5 = Conversacion.builder()
@@ -108,8 +104,7 @@ public class LoadDataBase {
                                         .lugar("Planta 2")
                                         .idioma(Idioma.INGLES)
                                         .nivel(Nivel.NATIVO)
-                                        .asistentes(asistenteconversaciones1)
-                                        .numeroAsistentes(2)
+                                        .asistentes(asistentesConversacion1)
                                         .build();
 
                         conversacionesAsistente1.add(conversacion1);
@@ -132,6 +127,7 @@ public class LoadDataBase {
                                                         .imagenAsistente("test.jpeg")
                                                         .correo("jgjfj@cap.com")
                                                         .idioma(Idioma.FRANCES)
+                                                        .nivel(Nivel.A)
                                                         .conversacion(conversacionesAsistente1)
                                                         .build();
                         
@@ -141,88 +137,115 @@ public class LoadDataBase {
                                                         .apellidos("BBB")
                                                         .correo("kffkk@cap.com")
                                                         .idioma(Idioma.INGLES)
+                                                        .nivel(Nivel.NATIVO)
                                                         .conversacion(conversacionesAsistente2)
                                                         .build();
 
-                         Asistente asistente3 = asistentesService.saveAsistente(
-                                        Asistente.builder()
+                         Asistente asistente3 = Asistente.builder()
                                                         .id(3)
                                                         .nombre("Richi")
                                                         .apellidos("CCC")
                                                         .correo("kdkdkdk@cap.com")
                                                         .idioma(Idioma.FRANCES)
+                                                        .nivel(Nivel.B)
                                                         .conversacion(conversacionesAsistente3)
-                                                        .build());
+                                                        .build();
 
-                        asistentesService.saveAsistente(
-                                        Asistente.builder()
+                        
+                        Asistente asistente4 =  Asistente.builder()
                                                         .id(4)
                                                         .nombre("Angel")
                                                         .apellidos("FGF")
                                                         .imagenAsistente("test.jpeg")
                                                         .correo("ihgf@cap.com")
                                                         .idioma(Idioma.FRANCES)
+                                                        .nivel(Nivel.NATIVO)
                                                         .conversacion(conversacionesAsistente1)
-                                                        .build());
+                                                        .build();
 
-                        asistentesService.saveAsistente(
-                                        Asistente.builder()
+                       
+                        Asistente asistente5 =  Asistente.builder()
                                                         .id(5)
                                                         .nombre("Victor")
                                                         .apellidos("MMM")
                                                         .imagenAsistente("test.jpeg")
                                                         .correo("ods@cap.com")
                                                         .idioma(Idioma.FRANCES)
+                                                        .nivel(Nivel.A)
                                                         .conversacion(conversacionesAsistente3)
-                                                        .build());
+                                                        .build();
 
-                        asistentesService.saveAsistente(
-                                        Asistente.builder()
+                       
+                        Asistente asistente6 =  Asistente.builder()
                                                         .id(6)
                                                         .nombre("Nina")
                                                         .apellidos("VVV")
                                                         .imagenAsistente("test.jpeg")
                                                         .correo("fdfd@cap.com")
                                                         .idioma(Idioma.FRANCES)
+                                                        .nivel(Nivel.B)
                                                         .conversacion(conversacionesAsistente1)
-                                                        .build());
+                                                        .build();
 
-                        asistentesService.saveAsistente(
-                                        Asistente.builder()
+                        
+                        Asistente asistente7 =  Asistente.builder()
                                                         .id(7)
                                                         .nombre("Alex")
                                                         .apellidos("PPP")
                                                         .imagenAsistente("test.jpeg")
                                                         .correo("sewe@cap.com")
                                                         .idioma(Idioma.FRANCES)
+                                                        .nivel(Nivel.C)
                                                         .conversacion(conversacionesAsistente2)
-                                                        .build());
+                                                        .build();
 
-                        asistentesService.saveAsistente(
-                                        Asistente.builder()
+                        
+                        Asistente asistente8 =  Asistente.builder()
                                                         .id(8)
                                                         .nombre("Lili")
                                                         .apellidos("FAS")
                                                         .imagenAsistente("test.jpeg")
                                                         .correo("sew@cap.com")
                                                         .idioma(Idioma.FRANCES)
+                                                        .nivel(Nivel.SINNIVEL)
                                                         .conversacion(conversacionesAsistente1)
-                                                        .build());
+                                                        .build();
 
-                        asistentesService.saveAsistente(
-                                        Asistente.builder()
+                        
+                        Asistente asistente9 =  Asistente.builder()
                                                         .id(9)
                                                         .nombre("Paula")
                                                         .apellidos("TTT")
                                                         .imagenAsistente("test.jpeg")
                                                         .correo("erer@cap.com")
                                                         .idioma(Idioma.FRANCES)
+                                                        .nivel(Nivel.SINNIVEL)
                                                         .conversacion(conversacionesAsistente3)
-                                                        .build());
+                                                        .build();
 
-                asistenteconversaciones1.add(asistente1);
-                asistenteconversaciones1.add(asistente3);
-                asistenteconversaciones1.add(asistente2);
+                        asistentesService.saveAsistente(asistente1);
+                        asistentesService.saveAsistente(asistente2);
+                        asistentesService.saveAsistente(asistente3);
+                        asistentesService.saveAsistente(asistente4); 
+                        asistentesService.saveAsistente(asistente5);
+                        asistentesService.saveAsistente(asistente6);
+                        asistentesService.saveAsistente(asistente7);
+                        asistentesService.saveAsistente(asistente8);
+                        asistentesService.saveAsistente(asistente9);
+                        
+                        asistentesConversacion1.add(asistente1);
+                        asistentesConversacion1.add(asistente2);
+                        asistentesConversacion1.add(asistente3);
+                        asistentesConversacion1.add(asistente4);
+                        asistentesConversacion1.add(asistente5);
+                        asistentesConversacion1.add(asistente6);
+                        asistentesConversacion1.add(asistente7);
+                        asistentesConversacion1.add(asistente8);
+
+                        asistentesConversacion2.add(asistente9);
+                        asistentesConversacion2.add(asistente3);
+                        asistentesConversacion2.add(asistente5);
+                        asistentesConversacion2.add(asistente7);
 
                 };
                

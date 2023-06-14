@@ -195,10 +195,9 @@ public class AsistenteController {
         Conversacion conversacion = conversacionService.findById(id);
         int dias = conversacion.getFecha().getDayOfMonth();
        
-        List <Integer> diasComp = asistente.getConversacion().stream()
+        List <Integer> diasDistintos = asistente.getConversacion().stream()
         .filter(c -> !c.getFecha().equals(dias))
         .map(c -> c.getFecha().getDayOfMonth()).toList();
-
     }
         // Si no hay errores, entonces persistimos el asistente,
         // comprobando previamente si nos han enviado una imagen
@@ -221,7 +220,7 @@ public class AsistenteController {
 
         try {
             Asistente asistentePersistido = asistenteService.saveAsistente(asistente);
-            String successMessage = "L'assistant a été mis à jour correctement";
+            String successMessage = "L'assistant a été creé correctement";
             responseAsMap.put("Mensage: ", successMessage);
             responseAsMap.put("Asistant:", asistentePersistido);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
@@ -274,7 +273,7 @@ public class AsistenteController {
             asistente.setId(idAsistente);
             Asistente asistenteActualizado = asistenteService.saveAsistente(asistente);
 
-            String successMessage = "L'assistant a été créé avec succès";
+            String successMessage = "L'assistant a été mis a jour avec succès";
             responseAsMap.put("Mensage: ", successMessage);
             responseAsMap.put("Asistant", asistenteActualizado);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
@@ -322,7 +321,6 @@ public class AsistenteController {
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         return responseEntity;
     }
 
@@ -355,22 +353,22 @@ public class AsistenteController {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
         Map<String, Object> responseAsMap = new HashMap<>();
+        Asistente asistente = asistenteService.findById(idAsistente);
 
         LocalDate hoy = LocalDate.now();
-        Period periodo = Period.ofYears(5);
 
-        LocalDate fechaFutura = hoy.plus(periodo);
         try {
-            List<Conversacion> conversaciones = asistenteService.findConversacionById(idAsistente);
+            List<Conversacion> titulosConversaciones = asistenteService.findConversacionById(idAsistente);
             
-            List<Conversacion> conv = conversaciones.stream()
-            .filter(c -> c.getFecha().equals(fechaFutura))
+            List<String> conv = titulosConversaciones.stream()
+            .filter(c -> c.getFecha().isAfter(hoy)&& c.getIdioma().equals(asistente.getIdioma()) && c.getNivel().equals(asistente.getNivel()))
+            .map(Conversacion::getTitulo)
             .collect(Collectors.toList());
 
             if (conv != null) {
                 String successMessage = "Les conversations avec ID du Asistant: " + idAsistente + " a été trouvée.";
                 responseAsMap.put("Message", successMessage);
-                responseAsMap.put("Conversations", conversaciones);
+                responseAsMap.put("Conversations", conv);
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
 
             } else {

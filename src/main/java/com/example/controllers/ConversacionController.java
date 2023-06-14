@@ -1,5 +1,6 @@
 package com.example.controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,13 +21,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
+import com.example.model.FileUploadResponse;
 import com.example.service.AsistenteService;
 import com.example.service.ConversacionService;
+import com.example.utilities.FileUploadUtil;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @RestController
@@ -38,6 +45,10 @@ public class ConversacionController {
 
     @Autowired
     AsistenteService asistenteService;
+
+    @Autowired
+    private FileUploadUtil fileUploadUtil;
+
 
     @GetMapping
     public ResponseEntity<List<List<Conversacion>>> findAll() {
@@ -51,10 +62,10 @@ public class ConversacionController {
             conversaciones = conversacionService.findAll();
             responseEntity = new ResponseEntity<>(Collections.singletonList(conversaciones), HttpStatus.OK);
 
-             ResponseEntity<List<Asistente>> responseEntity2;
-                   Conversacion conversacion = new Conversacion();
-        
-            List<Asistente> asistentes = conversacion.getAsistentes(); 
+            ResponseEntity<List<Asistente>> responseEntity2;
+            Conversacion conversacion = new Conversacion();
+
+            List<Asistente> asistentes = conversacion.getAsistentes();
             responseEntity2 = new ResponseEntity<List<Asistente>>(asistentes, HttpStatus.OK);
 
         } catch (Exception e) {
@@ -142,8 +153,7 @@ public class ConversacionController {
     // Metodo que actualiza una conversacion dado el id de la misma
     // Es basicamente igual al de persistir una conversacion nueva
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updateConversation(@Valid
-     @RequestBody Conversacion conversacion,
+    public ResponseEntity<Map<String, Object>> updateConversation(@Valid @RequestBody Conversacion conversacion,
             BindingResult results,
             @PathVariable(name = "id") Integer idConversacion) {
         Map<String, Object> responseAsMap = new HashMap<>();
@@ -166,7 +176,7 @@ public class ConversacionController {
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
             return responseEntity;
-    }
+        }
         // Si no hay errores persistimos el producto y devolvemos informacion
 
         try {
@@ -184,7 +194,6 @@ public class ConversacionController {
 
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         return responseEntity;
     }
 
@@ -199,24 +208,71 @@ public class ConversacionController {
         Conversacion conversacion = conversacionService.findById(idConversacion);
 
         try {
-        if (idConversacion != null) {
+            if (idConversacion != null) {
 
-            // conversacion.getAsistentes().clear();
-            
-           conversacionService.deleteAsistenteByIdConversacion(idConversacion);
-           
-        //    conversacionService.deleteConversacion(conversacion);
-        conversacionService.deleteConversacionById(idConversacion);
+                // conversacion.getAsistentes().clear();
 
-            responseAsMap.put("Message", "La conversation a été supprimée avec succès");
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
-        
-        } 
-    }catch (DataAccessException e) {
+                conversacionService.deleteAsistenteByIdConversacion(idConversacion);
+
+                conversacionService.deleteConversacionById(idConversacion);
+
+              //  conversacionService.deleteConversacion(conversacion);
+
+                responseAsMap.put("Message", "La conversation a été supprimée avec succès");
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
+
+            }
+        } catch (DataAccessException e) {
             responseAsMap.put("Erreur Grave",
                     "La conversation n'a pas pus être supprimée, a cause de: " + e.getMostSpecificCause());
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return responseEntity;
+    }
+
+    @PostMapping("/asistentes")
+    @Transactional
+    public ResponseEntity<Map<String, Object>> addAsistenteAConver (@Valid 
+    @RequestPart(name = "asistente") Asistente asistente,
+    @RequestParam(name = "idConversacion") Integer idConversacion,
+    @RequestPart(name = "file") MultipartFile file) throws IOException{
+
+
+        ResponseEntity<Map<String, Object>> responseEntity = null;
+        Map<String, Object> responseAsMap = new HashMap<>(); 
+
+        if(!file.isEmpty()) {
+        
+        String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
+        asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
+
+        // Devolver informacion respecto al file recibido
+        FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
+                .fileName(fileCode + "-" + file.getOriginalFilename())
+                .downloadURI("/asistentes/downloadFile/"
+                        + fileCode + "-" + file.getOriginalFilename())
+                .size(file.getSize())
+                .build();
+
+        responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
+    }
+
+    
+        Conversacion conversacion = conversacionService.findById(idConversacion);
+        
+        if(conversacion.getAsistentes().size() <= 8){
+            conversacion.getAsistentes().add(asistente);
+            responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
+        }else{
+
+        String errorMessage = "Le liste d'assistentes est complet";
+            responseAsMap.put("Erreur: ", errorMessage);
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);  
+        }
+        
+
+        return responseEntity; 
+
     }
 }

@@ -57,7 +57,6 @@ public class Asistente implements Serializable {
 
     private String imagenAsistente;
 
-
     @NotNull(message = "L'email ne peut pas être nul")
     @Pattern(regexp = "(?i)^[A-Z0-9._%+-]+@cap\\.com$", message = "L'e-mail doit avoir le domaine @cap.com")
     // @email(regexp = /^[a-zA-Z0-9._%+-]{2,6}@(cap)\.com$/)
@@ -66,6 +65,10 @@ public class Asistente implements Serializable {
     @Enumerated(EnumType.STRING)
     @NotNull(message = "La langue ne peut pas être nul")
      private Idioma idioma; 
+
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Le  niveau ne peut pas être nul")
+     private Nivel nivel; 
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Conversacion> conversacion;

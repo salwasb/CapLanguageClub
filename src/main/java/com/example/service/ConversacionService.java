@@ -10,6 +10,6 @@ public interface ConversacionService {
     public void delete(int idConversacion);
     public Conversacion save (Conversacion conversacion); 
     public void deleteAsistenteByIdConversacion(int idConversacion);
-     public void deleteConversacionById(int id);
-
+    public void deleteConversacionById(int id);
+    public void deleteConversacion(Conversacion conversacion);
 }

@@ -14,6 +14,6 @@ public interface AsistenteDao extends JpaRepository<Asistente, Integer> {
     @Query(value = "select a from Asistente a left join fetch a.conversacion")
      public List<Asistente>findAll(Sort sort);
 
-     @Query(value = "select titulo from conversaciones where id=?", nativeQuery = true)
-     public List<Conversacion> findConversacionById(int id);
+     @Query(value = "select c from Conversacion c where c.id = :idAsistente")
+     public List<Conversacion> findConversacionById(int idAsistente);
 }
