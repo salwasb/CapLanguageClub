@@ -8,6 +8,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -50,9 +51,9 @@ public class Conversacion implements Serializable {
     @NotBlank(message = "Le lieu ne peut pas être vide")
     private String lugar;
 
-    // @NotNull(message = "Le nombre d'assistants ne peut pas être null")
-    // @Min(value = 2, message = "Le nombre d'assistants ne peut pas etre inferieur a deux")
-    // @Max(value = 8, message = "Le nombre d'assistants ne peut pas etre superieur a huit")
+    //@NotNull(message = "Le nombre d'assistants ne peut pas être null")
+    //@Min(value = 2, message = "Le nombre d'assistants ne peut pas etre inferieur a deux")
+    @Max(value = 8, message = "Le nombre d'assistants ne peut pas etre superieur a huit")
     private int numeroAsistentes;
 
     @Future
@@ -83,8 +84,7 @@ public class Conversacion implements Serializable {
     // public void setInmutable(String inmutable){
     // this.inmutable= inmutable;
     // }
-    @ManyToMany(fetch = FetchType.LAZY)
-
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JsonBackReference
     private List<Asistente> asistentes;
 

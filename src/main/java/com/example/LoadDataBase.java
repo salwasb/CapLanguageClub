@@ -57,6 +57,7 @@ public class LoadDataBase {
                                         .idioma(Idioma.FRANCES)
                                         .nivel(Nivel.A)
                                         .asistentes(asistentesConversacion1)
+                                        .numeroAsistentes(asistentesConversacion1.size())
                                         .build();
 
                         Conversacion conversacion2 = Conversacion.builder()
@@ -69,6 +70,7 @@ public class LoadDataBase {
                                         .idioma(Idioma.INGLES)
                                         .nivel(Nivel.SINNIVEL)
                                         .asistentes(asistentesConversacion1)
+                                        .numeroAsistentes(asistentesConversacion1.size())
                                         .build();
 
                         Conversacion conversacion3 = Conversacion.builder()
@@ -81,6 +83,7 @@ public class LoadDataBase {
                                         .idioma(Idioma.INGLES)
                                         .nivel(Nivel.SINNIVEL)
                                         .asistentes(asistentesConversacion2)
+                                        .numeroAsistentes(asistentesConversacion2.size())
                                         .build();
 
                          Conversacion conversacion4 = Conversacion.builder()
@@ -93,6 +96,7 @@ public class LoadDataBase {
                                         .idioma(Idioma.FRANCES)
                                         .nivel(Nivel.C)
                                         .asistentes(asistentesConversacion1)
+                                        .numeroAsistentes(asistentesConversacion1.size())
                                         .build();
 
                         Conversacion conversacion5 = Conversacion.builder()
@@ -105,6 +109,7 @@ public class LoadDataBase {
                                         .idioma(Idioma.INGLES)
                                         .nivel(Nivel.NATIVO)
                                         .asistentes(asistentesConversacion1)
+                                        .numeroAsistentes(asistentesConversacion1.size())
                                         .build();
 
                         conversacionesAsistente1.add(conversacion1);

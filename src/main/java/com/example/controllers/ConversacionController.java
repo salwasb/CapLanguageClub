@@ -230,17 +230,17 @@ public class ConversacionController {
         return responseEntity;
     }
 
-    @PostMapping("/asistentes")
+    @PostMapping("/addAsistentes")
     @Transactional
     public ResponseEntity<Map<String, Object>> addAsistenteAConver (@Valid 
-    @RequestPart(name = "asistente") Asistente asistente,
+    @RequestParam(name = "idAsistente") Integer idAsistente,
     @RequestParam(name = "idConversacion") Integer idConversacion,
     @RequestPart(name = "file") MultipartFile file) throws IOException{
 
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
         Map<String, Object> responseAsMap = new HashMap<>(); 
-
+        Asistente asistente = asistenteService.findById(idAsistente); 
         if(!file.isEmpty()) {
         
         String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
@@ -259,9 +259,10 @@ public class ConversacionController {
 
     
         Conversacion conversacion = conversacionService.findById(idConversacion);
-        
+         
         if(conversacion.getAsistentes().size() <= 8){
-            conversacion.getAsistentes().add(asistente);
+            conversacion.getAsistentes().add(asistenteService.findById(idAsistente));
+            conversacion.setNumeroAsistentes(conversacion.getAsistentes().size());
             responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
         }else{
@@ -271,7 +272,7 @@ public class ConversacionController {
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);  
         }
         
-
+        
         return responseEntity; 
 
     }
