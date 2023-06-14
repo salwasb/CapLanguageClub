@@ -18,9 +18,7 @@ public interface ConversacionDao extends JpaRepository<Conversacion, Integer> {
                "    conversacion_id = ?1", nativeQuery = true)
      public void deleteConversacionById(int id);
 
-     @Modifying
-     @Query(value = "delete from conversaciones where id=?", nativeQuery = true)
-     public void deleteConversacion(Conversacion conversacion);
+
 
      
    

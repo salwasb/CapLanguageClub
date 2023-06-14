@@ -241,13 +241,12 @@ public class ConversacionController {
             if (idConversacion != null) {
 
                 conversacion.getAsistentes().clear();
-
-                // conversacionService.deleteAsistenteByIdConversacion(idConversacion);
-
+            
                 conversacionService.deleteConversacionById(idConversacion);
 
                 // conversacionService.deleteConversacion(conversacion);
-
+                conversacionService.delete(idConversacion);
+                
                 responseAsMap.put("Message", "La conversation a été supprimée avec succès");
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
 

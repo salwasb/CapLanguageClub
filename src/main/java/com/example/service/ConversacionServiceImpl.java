@@ -52,14 +52,6 @@ public class ConversacionServiceImpl implements ConversacionService{
         conversacionDao.deleteConversacionById(id);
     }
 
-    @Override
-    @Transactional
-    public void deleteConversacion(Conversacion conversacion) {
-        conversacionDao.deleteConversacion(conversacion);
-    }
-
-    
-
 
 
     
