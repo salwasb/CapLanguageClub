@@ -67,7 +67,7 @@ public class Conversacion implements Serializable {
     private Nivel nivel;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    //@JsonBackReference
+    @JsonBackReference
     private List<Asistente> asistentes;
 
     

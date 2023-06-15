@@ -37,6 +37,7 @@ import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
 import com.example.model.FileUploadResponse;
 import com.example.service.AsistenteService;
+import com.example.service.ConversacionService;
 import com.example.utilities.FileDownloadUtil;
 import com.example.utilities.FileUploadUtil;
 
@@ -52,6 +53,8 @@ public class AsistenteController {
     private FileUploadUtil fileUploadUtil;
     @Autowired
     private FileDownloadUtil fileDownloadUtil;
+    @Autowired
+    private ConversacionService conversacionService;
 
     @GetMapping
     public ResponseEntity<List<Asistente>> findAllByPage(
@@ -308,7 +311,7 @@ public class AsistenteController {
                 .body(resource);
     }
 
-    @GetMapping("/conversacion/{id}")
+    @GetMapping("/conversation/{id}")
     public ResponseEntity<Map<String, Object>> findConversacionesById(
             @PathVariable(name = "id", required = true) Integer idAsistente) {
 
@@ -319,12 +322,10 @@ public class AsistenteController {
         LocalDate hoy = LocalDate.now();
 
         try {
-            List<Conversacion> titulosConversaciones = asistenteService.findConversacionById(idAsistente);
-
-            List<String> conv = titulosConversaciones.stream()
+            List<Conversacion> conversaciones = conversacionService.findAll();
+            List<Conversacion> conv = conversaciones.stream()
                     .filter(c -> c.getFecha().isAfter(hoy) && c.getIdioma().equals(asistente.getIdioma())
                             && c.getNivel().equals(asistente.getNivel()))
-                    .map(Conversacion::getTitulo)
                     .collect(Collectors.toList());
 
             if (conv != null) {
