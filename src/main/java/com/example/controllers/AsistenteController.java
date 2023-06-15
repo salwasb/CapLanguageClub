@@ -325,7 +325,7 @@ public class AsistenteController {
             List<Conversacion> conversaciones = conversacionService.findAll();
             List<Conversacion> conv = conversaciones.stream()
                     .filter(c -> c.getFecha().isAfter(hoy) && c.getIdioma().equals(asistente.getIdioma())
-                            && c.getNivel().equals(asistente.getNivel()))
+                            && c.getNivel().equals(asistente.getNivel()) && c.getNumeroAsistentes()<=8)
                     .collect(Collectors.toList());
 
             if (conv != null) {
