@@ -266,27 +266,12 @@ public class ConversacionController {
     @Transactional
     public ResponseEntity<Map<String, Object>> addAsistenteAConver(
             @Valid @RequestParam(name = "idAsistente") Integer idAsistente,
-            @RequestParam(name = "idConversacion") Integer idConversacion,
-            @RequestPart(name = "file") MultipartFile file) throws IOException {
+            @RequestParam(name = "idConversacion") Integer idConversacion)
+           throws IOException {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
         Map<String, Object> responseAsMap = new HashMap<>();
         Asistente asistente = asistenteService.findById(idAsistente);
-        if (!file.isEmpty()) {
-
-            String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
-            asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
-
-            // Devolver informacion respecto al file recibido
-            FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
-                    .fileName(fileCode + "-" + file.getOriginalFilename())
-                    .downloadURI("/asistentes/downloadFile/"
-                            + fileCode + "-" + file.getOriginalFilename())
-                    .size(file.getSize())
-                    .build();
-
-            responseAsMap.put("Information sur l'image: ", fileUploadResponse);
-        }
 
         Conversacion conversacion = conversacionService.findById(idConversacion);
         LocalDate diaConversacion = conversacion.getFecha();
@@ -295,8 +280,10 @@ public class ConversacionController {
             List<Integer> diasDistintos = asistente.getConversacion().stream()
                     .filter(c -> !c.getFecha().equals(diaConversacion))
                     .map(c -> c.getFecha().getDayOfMonth()).toList();
+                 
             if (diasDistintos != null && diasDistintos.size() != 0) {
-                if (conversacion.getAsistentes().size() <= 8) {
+                
+                if (conversacion.getNumeroAsistentes() < 8) {
 
                     conversacion.getAsistentes().add(asistenteService.findById(idAsistente));
 
@@ -309,7 +296,7 @@ public class ConversacionController {
                     responseAsMap.put("Message: ", "L'assistant á été ajouté á la conversation.");
                     responseAsMap.put("Asistents: ", asistentePersistido);
                     responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
-                } else {
+                } else{
 
                     String errorMessage = "Le liste d'assistants est complet";
                     responseAsMap.put("Erreur: ", errorMessage);

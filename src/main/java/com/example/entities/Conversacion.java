@@ -17,8 +17,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,6 +49,7 @@ public class Conversacion implements Serializable {
     @NotBlank(message = "Le lieu ne peut pas être vide")
     private String lugar;
 
+    // @Max(value = 8)
     private int numeroAsistentes;
 
     @Future
@@ -60,7 +64,6 @@ public class Conversacion implements Serializable {
     private Modo modo;
 
     @Enumerated(EnumType.STRING)
-
     private Idioma idioma;
 
     @Enumerated(EnumType.STRING)
