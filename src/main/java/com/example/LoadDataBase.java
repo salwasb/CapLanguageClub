@@ -134,7 +134,7 @@ public class LoadDataBase {
                                                         .apellidos("AAA")
                                                         .imagenAsistente("test.jpeg")
                                                         .correo("jgjfj@cap.com")
-                                                        .idioma(Idioma.FRANCES)
+                                                        .idioma(Idioma.INGLES)
                                                         .nivel(Nivel.A)
                                                         .conversacion(conversacionesAsistente1)
                                                         .build();
