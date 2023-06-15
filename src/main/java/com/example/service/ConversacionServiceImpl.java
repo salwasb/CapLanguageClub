@@ -5,9 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.dao.AsistenteDao;
 import com.example.dao.ConversacionDao;
-import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
 
 import lombok.RequiredArgsConstructor;

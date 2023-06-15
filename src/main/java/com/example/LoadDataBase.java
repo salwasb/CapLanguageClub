@@ -46,6 +46,14 @@ public class LoadDataBase {
                                         .password("Temp2023$$")
                                         .role(Role.ADMIN)
                                         .build());
+                        userService.add(User.builder()
+                                        .id(2)
+                                        .firstName("Rachida")
+                                        .lastName("Ragmi")
+                                        .email("rachi@cap.com")
+                                        .password("Temp2023$$")
+                                        .role(Role.USER)
+                                        .build());
 
                         Conversacion conversacion1 = Conversacion.builder()
                                         .id(1)
@@ -136,6 +144,7 @@ public class LoadDataBase {
                                                         .nombre("Mimi")
                                                         .apellidos("BBB")
                                                         .correo("kffkk@cap.com")
+                                                        .imagenAsistente("test.jpeg")
                                                         .idioma(Idioma.INGLES)
                                                         .nivel(Nivel.NATIVO)
                                                         .conversacion(conversacionesAsistente2)
@@ -146,12 +155,12 @@ public class LoadDataBase {
                                                         .nombre("Richi")
                                                         .apellidos("CCC")
                                                         .correo("kdkdkdk@cap.com")
+                                                        .imagenAsistente("test.jpeg")
                                                         .idioma(Idioma.FRANCES)
                                                         .nivel(Nivel.B)
                                                         .conversacion(conversacionesAsistente3)
                                                         .build();
 
-                        
                         Asistente asistente4 =  Asistente.builder()
                                                         .id(4)
                                                         .nombre("Angel")

@@ -55,7 +55,7 @@ public class dto {
     public void setIdioma(Idioma idioma) {
         this.idioma = idioma;
     }
-@Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @JsonProperty("idioma")
     public Idioma getIdioma() {
         return idioma;

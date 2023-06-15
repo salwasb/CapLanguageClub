@@ -2,17 +2,11 @@ package com.example.controllers;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.MonthDay;
-import java.time.Period;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -43,16 +37,13 @@ import com.example.entities.Asistente;
 import com.example.entities.Conversacion;
 import com.example.model.FileUploadResponse;
 import com.example.service.AsistenteService;
-import com.example.service.ConversacionService;
 import com.example.utilities.FileDownloadUtil;
 import com.example.utilities.FileUploadUtil;
-import com.fasterxml.jackson.datatype.jsr310.deser.MonthDayDeserializer;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/asistentes")
+@RequestMapping("/assistants")
 public class AsistenteController {
 
     @Autowired
@@ -61,10 +52,6 @@ public class AsistenteController {
     private FileUploadUtil fileUploadUtil;
     @Autowired
     private FileDownloadUtil fileDownloadUtil;
-    @Autowired
-    private ConversacionService conversacionService;
-
-    // Metodo por el cual se obtienen TODOS los asistentes, con paginación
 
     @GetMapping
     public ResponseEntity<List<Asistente>> findAllByPage(
@@ -74,6 +61,7 @@ public class AsistenteController {
         List<Asistente> asistentes = new ArrayList<>();
         Sort sortByLastName = Sort.by("apellidos");
         ResponseEntity<List<Asistente>> responseEntity = null;
+        Map<String, Object> responseAsMap = new HashMap<>();
 
         // Primero comprobar si se requiere paginacion, o no
         if (page != null && size != null) {
@@ -84,9 +72,13 @@ public class AsistenteController {
             try {
                 Page<Asistente> asistentesPaginados = asistenteService.findAll(pageable);
                 asistentes = asistentesPaginados.getContent();
-                responseEntity = new ResponseEntity<List<Asistente>>(asistentes,
-                        HttpStatus.OK);
+                String successMessage = "Les assistants son trouvés.";
+                responseAsMap.put("Message: ", successMessage);
+                responseEntity = new ResponseEntity<List<Asistente>>(asistentes, HttpStatus.OK);
+
             } catch (Exception e) {
+                String failedMessage = "Les assistants ne son pas trouvés.";
+                responseAsMap.put("Message: ", failedMessage);
                 responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         } else {
@@ -125,8 +117,6 @@ public class AsistenteController {
     // return responseEntity;
     // }
 
-    // //Método por el cual el administrador puede obtener un asistente por su id
-
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> findAsistenteById(
             @PathVariable(name = "id", required = true) Integer idAsistente) {
@@ -138,26 +128,25 @@ public class AsistenteController {
             Asistente asistente = asistenteService.findById(idAsistente);
 
             if (asistente != null) {
-                String successMessage = "L'assistant avec ID: " + idAsistente + " a été trouvée.";
-                responseAsMap.put("Message", successMessage);
-                responseAsMap.put("Asistant", asistente);
+                String successMessage = "L'assistant avec ID: " + idAsistente + " a été trouvé.";
+                responseAsMap.put("Message: ", successMessage);
+                responseAsMap.put("Assistant: ", asistente);
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
 
             } else {
-                String notFoundMessage = "L'assistant avec ID:  " + idAsistente + " n'a pas pu être trouvée.";
-                responseAsMap.put("Message", notFoundMessage);
+                String notFoundMessage = "L'assistant avec ID:  " + idAsistente + " n'a pas pu être trouvé.";
+                responseAsMap.put("Message: ", notFoundMessage);
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.NOT_FOUND);
             }
         } catch (DataAccessException e) {
-            String errorMessage = "Erreur grave, et la causa la plus probable de l'erreur est: "
+            String errorMessage = "Erreur grave et la cause la plus probable est: "
                     + e.getMostSpecificCause();
-            responseAsMap.put("Erreur Grave", errorMessage);
+            responseAsMap.put("Erreur: ", errorMessage);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return responseEntity;
     }
 
-    // Metodo que persiste un asistente en la base de datos
     @PostMapping(consumes = "multipart/form-data")
     @Transactional
     public ResponseEntity<Map<String, Object>> saveAsistente(
@@ -167,14 +156,10 @@ public class AsistenteController {
         Map<String, Object> responseAsMap = new HashMap<>();
         ResponseEntity<Map<String, Object>> responseEntity = null;
 
-        // comprobar si el asistente a llegado con errores, es decir, si esta mal
-        // formado
         if (results.hasErrors()) {
 
             List<String> mensajesError = new ArrayList<>();
 
-            // quiero recorrer los resultados de la validacion y extraer los mensajes por
-            // defecto
             List<ObjectError> objectErrors = results.getAllErrors();
 
             for (ObjectError objectError : objectErrors) {
@@ -182,22 +167,18 @@ public class AsistenteController {
                 mensajesError.add(objectError.getDefaultMessage());
             }
             responseAsMap.put("Erreur: ", mensajesError);
-            responseAsMap.put("asistente: ", asistente);
+            responseAsMap.put("Assistant: ", asistente);
 
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
             return responseEntity;
         }
-        
-        // Si no hay errores, entonces persistimos el asistente,
-        // comprobando previamente si nos han enviado una imagen
-        // , o un archivo.
+
         if (!file.isEmpty()) {
 
             String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
             asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
 
-            // Devolver informacion respecto al file recibido
             FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
                     .fileName(fileCode + "-" + file.getOriginalFilename())
                     .downloadURI("/asistentes/downloadFile/"
@@ -205,28 +186,24 @@ public class AsistenteController {
                     .size(file.getSize())
                     .build();
 
-            responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
+            responseAsMap.put("Information de l'image: ", fileUploadResponse);
         }
 
         try {
             Asistente asistentePersistido = asistenteService.saveAsistente(asistente);
-            String successMessage = "L'assistant a été creé correctement";
-            responseAsMap.put("Mensage: ", successMessage);
-            responseAsMap.put("Asistant:", asistentePersistido);
+            String successMessage = "L'assistant a été créé correctement.";
+            responseAsMap.put("Message: ", successMessage);
+            responseAsMap.put("Asistant: ", asistentePersistido);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
         } catch (DataAccessException e) {
-            String errorMessage = "L'assistant n'a pas pu être conservé et la cause la plus probable de l'erreur est: "
+            String errorMessage = "L'assistant n'a pas pu être créé et la cause la plus probable de l'erreur est: "
                     + e.getMostSpecificCause();
-            responseAsMap.put("Erreur", errorMessage);
+            responseAsMap.put("Erreur: ", errorMessage);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return responseEntity;
     }
 
-    // Metodo por el cual el administrador puede modificar un asistente, recibiendo
-    // su id
-    // (creo que debe de ser casi igual que el de crear/dar de alta un asistente
-    // nuevo)
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<Map<String, Object>> updateAsistente(
@@ -239,37 +216,32 @@ public class AsistenteController {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
 
-        // Comprobar si el asistente ha llegado con errores, o si esta mal formado
         if (results.hasErrors()) {
 
             List<String> mensajesError = new ArrayList<>();
 
-            // Quiero recorrer los resultados de la validacion y extraer los mensajes por
-            // defecto
             List<ObjectError> objectErrors = results.getAllErrors();
 
             for (ObjectError objectError : objectErrors) {
                 mensajesError.add(objectError.getDefaultMessage());
             }
-
-            responseAsMap.put("Asistant: ", asistente);
+            responseAsMap.put("Assistant: ", asistente);
             responseAsMap.put("Erreur: ", mensajesError);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
             return responseEntity;
         }
-        // Si no hay errores persistimos/guardamos el asistente y devolvemos informacion
         try {
             asistente.setId(idAsistente);
             Asistente asistenteActualizado = asistenteService.saveAsistente(asistente);
 
-            String successMessage = "L'assistant a été mis a jour avec succès";
-            responseAsMap.put("Mensage: ", successMessage);
-            responseAsMap.put("Asistant", asistenteActualizado);
+            String successMessage = "L'assistant a été mis à jour avec succès.";
+            responseAsMap.put("Message: ", successMessage);
+            responseAsMap.put("Assistant: ", asistenteActualizado);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
         } catch (DataAccessException e) {
-            String errorMessage = "L'assistant n'a pas pu être mis à jour et" +
-                    "la cause la plus probable de l'erreur est : " + e.getMostSpecificCause();
+            String errorMessage = "L'assistant n'a pu être mis à jour et la cause la plus probable est : "
+                    + e.getMostSpecificCause();
             responseAsMap.put("Erreur: ", errorMessage);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -288,13 +260,11 @@ public class AsistenteController {
                     .size(file.getSize())
                     .build();
 
-            responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
+            responseAsMap.put("Information de l'image: ", fileUploadResponse);
         }
         return responseEntity;
     }
 
-    // Metodo por el cual el administrador puede eliminar un asistente, recibiendo
-    // su id
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deleteAsistente(@PathVariable(name = "id") Integer idAsistente) {
 
@@ -303,11 +273,11 @@ public class AsistenteController {
 
         try {
             asistenteService.deleteAsistente(asistenteService.findById(idAsistente));
-            responseAsMap.put("Mensage", "L'assistant a été supprimé avec succès");
+            responseAsMap.put("Message", "L'assistant a été supprimé avec succès.");
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
         } catch (DataAccessException e) {
-            responseAsMap.put("Erreur Grave",
-                    "Échec de la suppression de l'assistant, en raison de : " + e.getMostSpecificCause());
+            responseAsMap.put("Erreur grave: ",
+                    "Échec de la suppression de l'assistant et la cause est: " + e.getMostSpecificCause());
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -326,7 +296,7 @@ public class AsistenteController {
         }
 
         if (resource == null) {
-            return new ResponseEntity<>("File not found ", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("File ne pas trouvé. ", HttpStatus.NOT_FOUND);
         }
 
         String contentType = "application/octet-stream";
@@ -337,6 +307,7 @@ public class AsistenteController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
                 .body(resource);
     }
+
     @GetMapping("/conversacion/{id}")
     public ResponseEntity<Map<String, Object>> findConversacionesById(
             @PathVariable(name = "id", required = true) Integer idAsistente) {
@@ -349,27 +320,30 @@ public class AsistenteController {
 
         try {
             List<Conversacion> titulosConversaciones = asistenteService.findConversacionById(idAsistente);
-            
+
             List<String> conv = titulosConversaciones.stream()
-            .filter(c -> c.getFecha().isAfter(hoy)&& c.getIdioma().equals(asistente.getIdioma()) && c.getNivel().equals(asistente.getNivel()))
-            .map(Conversacion::getTitulo)
-            .collect(Collectors.toList());
+                    .filter(c -> c.getFecha().isAfter(hoy) && c.getIdioma().equals(asistente.getIdioma())
+                            && c.getNivel().equals(asistente.getNivel()))
+                    .map(Conversacion::getTitulo)
+                    .collect(Collectors.toList());
 
             if (conv != null) {
-                String successMessage = "Les conversations avec ID du Asistant: " + idAsistente + " a été trouvée.";
-                responseAsMap.put("Message", successMessage);
-                responseAsMap.put("Conversations", conv);
+                String successMessage = "Les conversations de l'assistant avec ID: " + idAsistente
+                        + " ont été trouvés.";
+                responseAsMap.put("Message: ", successMessage);
+                responseAsMap.put("Conversations: ", conv);
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
 
             } else {
-                String notFoundMessage = "Les conversations avec ID du Asistant:  " + idAsistente + " n'a pas pu être trouvée.";
-                responseAsMap.put("Message", notFoundMessage);
+                String notFoundMessage = "Les conversations de l'assistant avec ID:  " + idAsistente
+                        + " ne sont pas pu être trouvés.";
+                responseAsMap.put("Message: ", notFoundMessage);
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.NOT_FOUND);
             }
         } catch (DataAccessException e) {
-            String errorMessage = "Erreur grave, et la causa la plus probable de l'erreur est: "
+            String errorMessage = "Erreur grave et la cause la plus probable est: "
                     + e.getMostSpecificCause();
-            responseAsMap.put("Erreur Grave", errorMessage);
+            responseAsMap.put("Erreur: ", errorMessage);
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return responseEntity;

@@ -1,15 +1,7 @@
 package com.example.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-
-import org.hibernate.annotations.Cascade;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -19,11 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -59,7 +47,6 @@ public class Asistente implements Serializable {
 
     @NotNull(message = "L'email ne peut pas être nul")
     @Pattern(regexp = "(?i)^[A-Z0-9._%+-]+@cap\\.com$", message = "L'e-mail doit avoir le domaine @cap.com")
-    // @email(regexp = /^[a-zA-Z0-9._%+-]{2,6}@(cap)\.com$/)
     private String correo;
     
     @Enumerated(EnumType.STRING)

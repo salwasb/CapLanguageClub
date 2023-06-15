@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,8 +20,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class User {
-
-
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +27,8 @@ public class User {
     private String firstName;
     private String lastName;
 
-    @Column(unique = true) // No se repite, pero no forma parte de la PK
-    // @NaturalId(mutable = true) Para que forme parte de la PK
+    @Column(unique = true) 
+    @Pattern(regexp = "(?i)^[A-Z0-9._%+-]+@cap\\.com$")
     private String email;
 
     private String password;
