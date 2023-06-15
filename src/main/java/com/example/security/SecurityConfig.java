@@ -25,12 +25,16 @@ public class SecurityConfig   {
         return http
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> {
-            auth.requestMatchers(HttpMethod.GET, "/asistentes/**").permitAll();
+            auth.requestMatchers(HttpMethod.GET, "/assistants/**").permitAll();
             auth.requestMatchers(HttpMethod.GET, "/conversations/**").permitAll();
             auth.requestMatchers("/users/**").permitAll();
-            auth.requestMatchers(HttpMethod.POST, "/asistentes/**").hasAuthority("ADMIN");
-            auth.requestMatchers(HttpMethod.PUT, "/asistentes/**").hasAuthority("ADMIN");
-            auth.requestMatchers(HttpMethod.DELETE, "/asistentes/**").hasAuthority("ADMIN");
+            auth.requestMatchers(HttpMethod.POST, "/assistants/**").hasAuthority("ADMIN");
+            auth.requestMatchers(HttpMethod.PUT, "/assistants/**").hasAuthority("ADMIN");
+            auth.requestMatchers(HttpMethod.DELETE, "/assistants/**").hasAuthority("ADMIN");
+            
+            auth.requestMatchers(HttpMethod.POST, "/conversations/**").hasAuthority("ADMIN");
+            auth.requestMatchers(HttpMethod.PUT, "/conversations/**").hasAuthority("ADMIN");
+            auth.requestMatchers(HttpMethod.DELETE, "/conversations/**").hasAuthority("ADMIN");
             auth.anyRequest().authenticated();
             }).httpBasic(Customizer.withDefaults()).build();
      }
