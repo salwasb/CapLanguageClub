@@ -50,7 +50,6 @@ public class ConversacionController {
     @Autowired
     private FileUploadUtil fileUploadUtil;
 
-
     @GetMapping
     public ResponseEntity<List<List<Conversacion>>> findAll() {
 
@@ -217,7 +216,7 @@ public class ConversacionController {
 
                 conversacionService.deleteConversacionById(idConversacion);
 
-              //  conversacionService.deleteConversacion(conversacion);
+                // conversacionService.deleteConversacion(conversacion);
 
                 responseAsMap.put("Message", "La conversation a été supprimée avec succès");
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
@@ -233,67 +232,88 @@ public class ConversacionController {
 
     @PostMapping("/addAsistentes")
     @Transactional
-    public ResponseEntity<Map<String, Object>> addAsistenteAConver (@Valid 
-    @RequestParam(name = "idAsistente") Integer idAsistente,
-    @RequestParam(name = "idConversacion") Integer idConversacion,
-    @RequestPart(name = "file") MultipartFile file) throws IOException{
-
+    public ResponseEntity<Map<String, Object>> addAsistenteAConver(
+            @Valid @RequestParam(name = "idAsistente") Integer idAsistente,
+            @RequestParam(name = "idConversacion") Integer idConversacion,
+            @RequestPart(name = "file") MultipartFile file) throws IOException {
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
-        Map<String, Object> responseAsMap = new HashMap<>(); 
-        Asistente asistente = asistenteService.findById(idAsistente); 
-        if(!file.isEmpty()) {
-        
-        String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
-        asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
+        Map<String, Object> responseAsMap = new HashMap<>();
+        Asistente asistente = asistenteService.findById(idAsistente);
+        if (!file.isEmpty()) {
 
-        // Devolver informacion respecto al file recibido
-        FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
-                .fileName(fileCode + "-" + file.getOriginalFilename())
-                .downloadURI("/asistentes/downloadFile/"
-                        + fileCode + "-" + file.getOriginalFilename())
-                .size(file.getSize())
-                .build();
+            String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
+            asistente.setImagenAsistente(fileCode + "-" + file.getOriginalFilename());
 
-        responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
-    }
-    
-   
-    Conversacion conversacion = conversacionService.findById(idConversacion);
-   LocalDate diaConversacion =  conversacion.getFecha();
-   if(asistente.getConversacion() != null){
+            // Devolver informacion respecto al file recibido
+            FileUploadResponse fileUploadResponse = FileUploadResponse.builder()
+                    .fileName(fileCode + "-" + file.getOriginalFilename())
+                    .downloadURI("/asistentes/downloadFile/"
+                            + fileCode + "-" + file.getOriginalFilename())
+                    .size(file.getSize())
+                    .build();
 
-   List<Integer> diasDistintos = asistente.getConversacion().stream()
-   .filter(c -> !c.getFecha().equals(diaConversacion))
-   .map(c -> c.getFecha().getDayOfMonth()).toList();
-
-
-        if(conversacion.getAsistentes().size() <= 8 && diasDistintos != null){
-            conversacion.getAsistentes().add(asistenteService.findById(idAsistente));
-            conversacion.setNumeroAsistentes(conversacion.getAsistentes().size());
-            responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
-        }else{
-
-        String errorMessage = "Le liste d'assistentes est complet";
-            responseAsMap.put("Erreur: ", errorMessage);
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);  
+            responseAsMap.put("Informations sur l'image: ", fileUploadResponse);
         }
-   }else{
-     if(conversacion.getAsistentes().size() <= 8){
-            conversacion.getAsistentes().add(asistenteService.findById(idAsistente));
-            conversacion.setNumeroAsistentes(conversacion.getAsistentes().size());
-            responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
-        }else{
 
-        String errorMessage = "Le liste d'assistentes est complet";
-            responseAsMap.put("Erreur: ", errorMessage);
-            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);  
+        Conversacion conversacion = conversacionService.findById(idConversacion);
+        LocalDate diaConversacion = conversacion.getFecha();
+        if (asistente.getConversacion() != null && asistente.getConversacion().size() != 0) {
+
+            List<Integer> diasDistintos = asistente.getConversacion().stream()
+                    .filter(c -> !c.getFecha().equals(diaConversacion))
+                    .map(c -> c.getFecha().getDayOfMonth()).toList();
+            if (diasDistintos != null && diasDistintos.size()!=0){
+                if (conversacion.getAsistentes().size() <= 8) {
+                    
+                    conversacion.getAsistentes().add(asistenteService.findById(idAsistente));
+
+                    List<Conversacion> listaDeConversacion = new ArrayList<>(); 
+                    listaDeConversacion.add(conversacion);
+                    asistente.setConversacion(listaDeConversacion);
+                    
+                    List<Asistente> asistentePersistido = conversacion.getAsistentes();
+                    conversacion.setNumeroAsistentes(conversacion.getAsistentes().size());
+                    responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
+                    responseAsMap.put("Asistentes", asistentePersistido);
+                    responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
+                } else {
+
+                    String errorMessage = "Le liste d'assistentes est complet";
+                    responseAsMap.put("Erreur: ", errorMessage);
+                    responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+                }
+            } else {
+
+                    String errorMessage = "Ya estás en una conversacion ese día";
+                    responseAsMap.put("Erreur: ", errorMessage);
+                    responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+                }
+
+        }else {
+                if (conversacion.getAsistentes().size() <= 8) {
+                    conversacion.getAsistentes().add(asistenteService.findById(idAsistente));
+
+                    List<Conversacion> listaDeConversacion = new ArrayList<>(); 
+                    listaDeConversacion.add(conversacion);
+                    asistente.setConversacion(listaDeConversacion);
+
+                    List<Asistente> asistentePersistido = conversacion.getAsistentes();
+                    conversacion.setNumeroAsistentes(conversacion.getAsistentes().size());
+                    responseAsMap.put("Message", "El asistente se ha añadido a la conversacion");
+                    responseAsMap.put("Asistentes", asistentePersistido);
+                    responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
+                } else {
+
+                    String errorMessage = "La liste d'assistentes est complet";
+                    responseAsMap.put("Erreur: ", errorMessage);
+                    responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+                }
+            }
+            return responseEntity;
         }
-   }
+
         
-        return responseEntity; 
+        
 
     }
-}
